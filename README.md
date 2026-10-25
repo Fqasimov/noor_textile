@@ -70,6 +70,22 @@ Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timing
 
 ## Brand palette
 
+Only black, white, gold and silver. The full token table, type rules and manuscript components are in `DESIGN.md`.
+
+## Logo animation video (Remotion)
+
+The site's cover intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
+
+```bash
+cd video && npm install
+npm run studio     # preview
+npm run render     # → video/out/noor-intro.mp4
+```
+
+Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timings.
+
+## Brand palette
+
 | Token | Hex | Use |
 |---|---|---|
 | `ink` | `#0b1020` | dark navy-black: intro, hero, footer |
