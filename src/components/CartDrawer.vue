@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
-import { Minus, Plus, ShoppingBag, X } from "lucide-vue-next";
+import { Minus, Plus, X } from "lucide-vue-next";
 import { cartCount, cartLines, cartOpen, cartTotal, setQty } from "@/composables/cart";
 import { formatPrice } from "@/data/products";
 import { site, whatsappLink } from "@/data/site";
+import { goToSection } from "@/router";
 
 const name = ref("");
 const phone = ref("");
@@ -18,7 +19,7 @@ const message = computed(() =>
     "",
     ...cartLines.value.map(
       (l, i) =>
-        `${i + 1}. ${l.product.name}${l.product.size ? ` (${l.product.size})` : ""} × ${l.qty} — ${
+        `${i + 1}. ${l.product.name}${l.product.size ? ` (${l.product.size})` : ""} × ${l.qty}: ${
           l.product.price === null ? "qiymət sorğu ilə" : `${l.product.price * l.qty} ₼`
         }`,
     ),
@@ -40,69 +41,62 @@ watch(cartOpen, (open) => {
 });
 onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 
-const field =
-  "h-11 rounded-md border border-line bg-white px-4 text-sm outline-none transition-colors focus:border-gold";
+function browse() {
+  cartOpen.value = false;
+  goToSection("kataloq");
+}
 </script>
 
 <template>
   <Transition name="cart" :duration="450">
-  <div v-if="cartOpen" class="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="Səbət">
-      <div class="backdrop absolute inset-0 bg-ink/40 backdrop-blur-[2px]" @click="cartOpen = false" />
+    <div v-if="cartOpen" class="fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+      <div class="backdrop absolute inset-0 bg-ink/35" @click="cartOpen = false" />
       <aside
-        class="panel absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-paper pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-2xl"
+        class="panel absolute inset-y-0 right-0 flex w-full max-w-[440px] flex-col bg-paper pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-[-24px_0_60px_rgba(0,0,0,0.12)]"
       >
-        <div class="flex items-center justify-between border-b border-line px-6 py-5">
-          <div>
-            <p class="eyebrow text-gold-deep">Səbət</p>
-            <p class="display text-2xl">{{ cartCount ? `${cartCount} məhsul` : "Səbət boşdur" }}</p>
-          </div>
-          <button
-            type="button"
-            aria-label="Bağla"
-            class="grid size-10 place-items-center rounded-full border border-line transition-transform active:scale-95"
-            @click="cartOpen = false"
-          >
-            <X class="size-4" />
+        <div class="flex items-center justify-between px-7 pb-5 pt-7">
+          <h2 id="cart-title" class="display text-[2rem]">
+            Səbət <span class="text-base text-silver-ink tabular-nums">{{ cartCount }}</span>
+          </h2>
+          <button type="button" aria-label="Səbəti bağla" class="grid size-11 place-items-center text-ink-soft hover:text-ink active:scale-95" @click="cartOpen = false">
+            <X class="size-5" :stroke-width="1.3" />
           </button>
         </div>
+        <div class="rule-double mx-7" />
 
-        <div v-if="cartLines.length === 0" class="flex flex-1 flex-col items-center justify-center gap-5 px-8 text-center">
-          <div class="grid size-16 place-items-center rounded-full bg-mist">
-            <ShoppingBag class="size-6 text-gold-deep" :stroke-width="1.4" />
-          </div>
-          <p class="text-sm text-muted">Kataloqdan bəyəndiyiniz məhsulları əlavə edin.</p>
-          <RouterLink :to="{ name: 'home', hash: '#kataloq' }" class="btn btn-dark" @click="cartOpen = false">
-            Kataloqa bax
-          </RouterLink>
+        <div v-if="cartLines.length === 0" class="flex flex-1 flex-col items-center justify-center gap-6 px-10 text-center">
+          <p class="display text-2xl">Səbət hələ boşdur</p>
+          <p class="text-ink-soft">Kataloqdan bəyəndiyiniz əsəri seçin, burada sizi gözləyəcək.</p>
+          <button type="button" class="btn btn-ink" @click="browse">Kataloqa keçin</button>
         </div>
 
         <template v-else>
-          <TransitionGroup tag="ul" name="card" class="flex-1 divide-y divide-line overflow-y-auto px-6">
-            <li v-for="l in cartLines" :key="l.slug" class="flex gap-4 py-5">
-              <div class="relative h-24 w-20 shrink-0 overflow-hidden rounded-sm bg-mist">
+          <TransitionGroup tag="ul" name="card" class="flex-1 overflow-y-auto px-7">
+            <li v-for="l in cartLines" :key="l.slug" class="flex gap-5 border-b border-line py-6">
+              <div class="relative h-[104px] w-[84px] shrink-0 overflow-hidden bg-wash">
                 <img
                   :src="l.product.images[0]"
                   :alt="l.product.name"
                   class="absolute inset-0 size-full"
-                  :class="l.product.cutout ? 'object-contain p-1 mix-blend-multiply' : 'object-cover'"
+                  :class="l.product.cutout ? 'object-contain p-1.5 mix-blend-multiply' : 'object-cover'"
                 />
               </div>
               <div class="flex min-w-0 flex-1 flex-col">
-                <RouterLink :to="`/kataloq/${l.slug}`" class="display truncate text-xl" @click="cartOpen = false">
+                <RouterLink :to="`/kataloq/${l.slug}`" class="display truncate text-[1.3rem] hover:text-gold-deep" @click="cartOpen = false">
                   {{ l.product.name }}
                 </RouterLink>
-                <p class="text-xs text-muted">{{ l.product.size ?? l.product.color }}</p>
+                <p class="text-[0.82rem] text-silver-ink">{{ l.product.size ?? l.product.color }}</p>
                 <div class="mt-auto flex items-center justify-between">
-                  <div class="flex items-center rounded-full border border-line">
-                    <button type="button" aria-label="Azalt" class="grid size-8 place-items-center active:scale-90" @click="setQty(l.slug, l.qty - 1)">
-                      <Minus class="size-3" />
+                  <div class="flex items-center shadow-[inset_0_0_0_1px_var(--color-line)]">
+                    <button type="button" :aria-label="`${l.product.name}: azalt`" class="grid size-9 place-items-center active:scale-90" @click="setQty(l.slug, l.qty - 1)">
+                      <Minus class="size-3" :stroke-width="1.4" />
                     </button>
                     <span class="w-6 text-center text-sm tabular-nums">{{ l.qty }}</span>
-                    <button type="button" aria-label="Artır" class="grid size-8 place-items-center active:scale-90" @click="setQty(l.slug, l.qty + 1)">
-                      <Plus class="size-3" />
+                    <button type="button" :aria-label="`${l.product.name}: artır`" class="grid size-9 place-items-center active:scale-90" @click="setQty(l.slug, l.qty + 1)">
+                      <Plus class="size-3" :stroke-width="1.4" />
                     </button>
                   </div>
-                  <p class="text-sm font-semibold tabular-nums">
+                  <p class="tabular-nums text-[0.95rem]">
                     {{ l.product.price === null ? formatPrice(null) : `${l.product.price * l.qty} ₼` }}
                   </p>
                 </div>
@@ -110,39 +104,50 @@ const field =
             </li>
           </TransitionGroup>
 
-          <form class="space-y-4 border-t border-line bg-mist/60 px-6 py-5" @submit.prevent>
-            <div class="grid gap-2">
-              <input id="cart-name" v-model="name" placeholder="Adınız" autocomplete="name" :class="field" />
-              <input id="cart-phone" v-model="phone" placeholder="Telefon" type="tel" inputmode="tel" autocomplete="tel" :class="field" />
-              <input id="cart-address" v-model="address" placeholder="Çatdırılma ünvanı" autocomplete="street-address" :class="field" />
+          <form class="space-y-5 bg-wash px-7 pb-7 pt-6" @submit.prevent>
+            <div class="grid gap-4">
+              <label class="block">
+                <span class="smallcaps text-[0.62rem] text-silver-ink">Adınız</span>
+                <input id="cart-name" v-model="name" autocomplete="name" class="field" />
+              </label>
+              <label class="block">
+                <span class="smallcaps text-[0.62rem] text-silver-ink">Telefon</span>
+                <input id="cart-phone" v-model="phone" type="tel" inputmode="tel" autocomplete="tel" class="field" />
+              </label>
+              <label class="block">
+                <span class="smallcaps text-[0.62rem] text-silver-ink">Çatdırılma ünvanı</span>
+                <input id="cart-address" v-model="address" autocomplete="street-address" class="field" />
+              </label>
             </div>
-            <div class="flex items-baseline justify-between">
-              <span class="eyebrow text-muted">Cəmi</span>
-              <span class="display text-3xl tabular-nums">
-                {{ cartTotal }} ₼<span v-if="hasOnRequest" class="ml-1 align-middle text-xs text-muted">+ sorğu</span>
+            <div class="flex items-baseline justify-between border-t border-gold pt-5">
+              <span class="text-ink-soft">Cəmi</span>
+              <span class="text-[1.5rem] font-medium tabular-nums">
+                {{ cartTotal }} ₼<span v-if="hasOnRequest" class="ml-2 align-middle text-xs font-normal text-silver-ink">+ sorğu ilə</span>
               </span>
             </div>
-            <a :href="whatsappLink(message)" target="_blank" rel="noopener noreferrer" class="btn btn-gold w-full">
-              WhatsApp ilə sifariş et
+            <a :href="whatsappLink(message)" target="_blank" rel="noopener noreferrer" class="btn btn-ink w-full">
+              Sifarişi WhatsApp-a göndərin
             </a>
-            <p class="text-center text-xs text-muted">
-              Sifarişi təsdiqləmək üçün sizinlə əlaqə saxlayacağıq · {{ site.phoneDisplay }}
+            <p class="text-center text-[0.8rem] text-silver-ink">
+              Sifarişi təsdiqləmək üçün sizə zəng edəcəyik. {{ site.phoneDisplay }}
             </p>
           </form>
         </template>
       </aside>
-  </div>
+    </div>
   </Transition>
 </template>
 
 <style scoped>
 .cart-enter-active .backdrop,
 .cart-leave-active .backdrop {
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s ease;
 }
-.cart-enter-active .panel,
-.cart-leave-active .panel {
+.cart-enter-active .panel {
   transition: transform 0.45s var(--ease-drawer);
+}
+.cart-leave-active .panel {
+  transition: transform 0.3s var(--ease-drawer);
 }
 .cart-enter-from .backdrop,
 .cart-leave-to .backdrop {
@@ -151,5 +156,8 @@ const field =
 .cart-enter-from .panel,
 .cart-leave-to .panel {
   transform: translateX(100%);
+}
+.panel {
+  box-shadow: inset 1px 0 0 var(--color-gold);
 }
 </style>

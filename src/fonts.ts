@@ -1,3 +1,2 @@
-import "@fontsource-variable/cormorant-garamond/wght.css";
-import "@fontsource-variable/cormorant-garamond/wght-italic.css";
-import "@fontsource-variable/manrope/wght.css";
+import "@fontsource-variable/bodoni-moda/opsz.css";
+import "@fontsource-variable/jost/wght.css";

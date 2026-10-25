@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { Search, X } from "lucide-vue-next";
-import { categories, products, type CategoryId } from "@/data/products";
+import { categories, products } from "@/data/products";
+import { catalogCategory as category } from "@/composables/catalog";
 import ProductCard from "./ProductCard.vue";
+import SerlovheBand from "./ornament/SerlovheBand.vue";
+import CatchWord from "./ornament/CatchWord.vue";
 
 type Sort = "featured" | "price-asc" | "price-desc";
 const sorts: { id: Sort; label: string }[] = [
-  { id: "featured", label: "Seçilmiş" },
-  { id: "price-asc", label: "Ucuzdan bahaya" },
-  { id: "price-desc", label: "Bahadan ucuza" },
+  { id: "featured", label: "Seçilmiş sıra" },
+  { id: "price-asc", label: "Qiymət: artan" },
+  { id: "price-desc", label: "Qiymət: azalan" },
 ];
 
 // Azerbaijani-aware, accent-insensitive matching ("sufre" finds "Süfrə").
@@ -20,7 +23,6 @@ const fold = (s: string) =>
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "");
 
-const category = ref<CategoryId | "all">("all");
 const query = ref("");
 const sort = ref<Sort>("featured");
 
@@ -46,13 +48,12 @@ const visible = computed(() => {
   });
 });
 
-// Sliding pill under the active category tab.
+// A gold rule slides under the active tab.
 const tabEls = ref<HTMLElement[]>([]);
-const pill = ref({ x: 0, w: 0, ready: false });
+const rule = ref({ x: 0, w: 0, ready: false });
 function measure() {
-  const i = tabs.findIndex((t) => t.id === category.value);
-  const el = tabEls.value[i];
-  if (el) pill.value = { x: el.offsetLeft, w: el.offsetWidth, ready: true };
+  const el = tabEls.value[tabs.findIndex((t) => t.id === category.value)];
+  if (el) rule.value = { x: el.offsetLeft, w: el.offsetWidth, ready: true };
 }
 watch(category, () => nextTick(measure));
 onMounted(() => {
@@ -70,28 +71,18 @@ function reset() {
 
 <template>
   <section id="kataloq" class="bg-paper">
-    <div class="mx-auto max-w-7xl px-4 pt-24 sm:px-8 lg:pt-32">
-      <div v-reveal class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-        <div>
-          <p class="eyebrow text-gold-deep">Kataloq</p>
-          <h2 class="display mt-4 text-[clamp(2.6rem,5.4vw,4.6rem)]">Bütün kolleksiya</h2>
-        </div>
-        <p class="max-w-sm text-sm leading-relaxed text-muted">
-          Səbətə əlavə edin və sifarişi bir toxunuşla WhatsApp-a göndərin. Qiyməti göstərilməyən məhsullar üçün bizə yazın.
-        </p>
-      </div>
+    <div class="mx-auto max-w-[1360px] px-4 pt-24 sm:px-10 lg:pt-32">
+      <SerlovheBand title="Kataloq" />
+      <p class="mx-auto mt-12 max-w-[50ch] text-center text-[1.02rem] text-ink-soft">
+        {{ products.length }} əsər. Səbətə əlavə edin, sifarişi bir toxunuşla WhatsApp-a göndərin.
+      </p>
     </div>
 
-    <div class="sticky top-[calc(4rem+env(safe-area-inset-top))] z-30 mt-10 border-y border-line bg-paper/90 backdrop-blur-xl sm:top-[calc(5rem+env(safe-area-inset-top))]">
-      <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+    <div class="sticky top-[calc(4rem+env(safe-area-inset-top))] z-30 mt-12 bg-paper/95 backdrop-blur-sm sm:top-[calc(76px+env(safe-area-inset-top))]">
+      <div class="rule-double" />
+      <div class="mx-auto flex max-w-[1360px] flex-col gap-2 px-4 py-2 sm:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
         <div class="no-scrollbar -mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0">
-          <div class="relative flex gap-2" role="tablist" aria-label="Kateqoriyalar">
-            <span
-              class="absolute inset-y-0 left-0 rounded-full bg-ink"
-              :class="pill.ready ? 'transition-[transform,width] duration-[400ms] ease-[var(--ease-out-strong)]' : ''"
-              :style="{ width: `${pill.w}px`, transform: `translateX(${pill.x}px)` }"
-              aria-hidden="true"
-            />
+          <div class="relative flex gap-7" role="tablist" aria-label="Kateqoriyalar">
             <button
               v-for="t in tabs"
               :key="t.id"
@@ -99,62 +90,78 @@ function reset() {
               type="button"
               role="tab"
               :aria-selected="category === t.id"
-              class="relative flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-[13px] font-medium transition-colors duration-200"
-              :class="category === t.id ? 'text-paper' : 'text-ink/70 hover:text-ink'"
+              class="flex min-h-12 shrink-0 items-baseline gap-1.5 text-[0.98rem] transition-colors duration-200"
+              :class="category === t.id ? 'text-ink' : 'text-silver-ink hover:text-ink'"
               @click="category = t.id"
             >
               {{ t.short }}
-              <span class="text-[11px] tabular-nums" :class="category === t.id ? 'text-gold-soft' : 'text-muted'">{{ counts[t.id] ?? 0 }}</span>
+              <sup class="tabular-nums text-[0.68rem]" :class="category === t.id ? 'text-gold-deep' : ''">{{ counts[t.id] ?? 0 }}</sup>
             </button>
+            <span
+              class="absolute bottom-2 left-0 h-px bg-gold"
+              :class="rule.ready ? 'transition-[transform,width] duration-300 ease-[var(--ease-out-strong)]' : ''"
+              :style="{ width: `${rule.w}px`, transform: `translateX(${rule.x}px)` }"
+              aria-hidden="true"
+            />
           </div>
         </div>
 
-        <div class="flex gap-2">
-          <label class="relative flex h-10 flex-1 items-center lg:w-64 lg:flex-none">
-            <Search class="pointer-events-none absolute left-3.5 size-4 text-muted" :stroke-width="1.6" />
+        <div class="flex items-center gap-6 pb-2 lg:pb-0">
+          <label class="relative flex flex-1 items-center lg:w-64 lg:flex-none">
+            <Search class="pointer-events-none absolute left-0 size-4 text-silver-ink" :stroke-width="1.4" />
             <input
               id="catalog-search"
               v-model="query"
               type="search"
-              placeholder="Axtar: süfrə, kilim…"
+              placeholder="Axtar: süfrə, kilim, nar…"
               aria-label="Kataloqda axtar"
-              class="h-full w-full rounded-full border border-line bg-white pl-10 pr-9 text-[13px] outline-none transition-colors placeholder:text-muted/70 focus:border-gold [&::-webkit-search-cancel-button]:hidden"
+              class="field pl-7 pr-8 [&::-webkit-search-cancel-button]:hidden"
             />
             <button
               v-if="query"
               type="button"
               aria-label="Axtarışı təmizlə"
-              class="absolute right-2 grid size-6 place-items-center rounded-full text-muted hover:bg-mist"
+              class="absolute right-0 grid size-8 place-items-center text-silver-ink hover:text-ink"
               @click="query = ''"
             >
               <X class="size-3.5" />
             </button>
           </label>
-          <select
-            id="catalog-sort"
-            v-model="sort"
-            aria-label="Sıralama"
-            class="h-10 rounded-full border border-line bg-white px-4 text-[13px] outline-none focus:border-gold"
-          >
+          <select id="catalog-sort" v-model="sort" aria-label="Sıralama" class="field w-auto shrink-0 pr-2 text-[0.9rem]">
             <option v-for="s in sorts" :key="s.id" :value="s.id">{{ s.label }}</option>
           </select>
         </div>
       </div>
+      <div class="h-px bg-line" />
     </div>
 
-    <div class="mx-auto max-w-7xl px-4 pb-28 pt-10 sm:px-8 lg:pb-36">
-      <p class="mb-6 text-xs text-muted" aria-live="polite">{{ visible.length }} məhsul</p>
-      <TransitionGroup tag="ul" name="card" class="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 xl:grid-cols-4 xl:gap-x-6">
-        <li v-for="(p, i) in visible" :key="p.slug" class="min-w-0">
+    <div class="mx-auto max-w-[1360px] px-4 pb-24 pt-2 sm:px-10 lg:pb-32">
+      <!-- Ruled like verse columns: gold hairlines between items, no boxes. -->
+      <TransitionGroup tag="ul" name="card" class="ruled grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+        <li v-for="(p, i) in visible" :key="p.slug" class="min-w-0 px-3 py-8 sm:px-6 sm:py-10">
           <ProductCard :product="p" :eager="i < 4" />
         </li>
       </TransitionGroup>
 
       <div v-if="visible.length === 0" class="py-24 text-center">
-        <p class="display text-3xl">Heç nə tapılmadı</p>
-        <p class="mt-2 text-sm text-muted">Başqa söz yoxlayın və ya bütün kateqoriyalara baxın.</p>
-        <button type="button" class="btn btn-outline mt-6" @click="reset">Filtrləri sıfırla</button>
+        <p class="display text-3xl">Bu axtarışa uyğun əsər yoxdur</p>
+        <p class="mt-3 text-ink-soft">Başqa söz yazın və ya bütün kateqoriyalara qayıdın.</p>
+        <button type="button" class="btn btn-line mt-8" @click="reset">Hamısını göstər</button>
       </div>
+
+      <p class="sr-only" aria-live="polite">{{ visible.length }} məhsul göstərilir</p>
+      <CatchWord class="mt-16" to="elaqe" word="Əlaqə" />
     </div>
   </section>
 </template>
+
+<style scoped>
+.ruled {
+  overflow: hidden;
+}
+.ruled > li {
+  box-shadow:
+    -1px 0 0 color-mix(in oklab, var(--color-gold) 55%, transparent),
+    0 -1px 0 var(--color-line);
+}
+</style>

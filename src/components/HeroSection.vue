@@ -1,113 +1,135 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue";
-import { ArrowDown } from "lucide-vue-next";
+import { RouterLink } from "vue-router";
+import SerlovheBand from "./ornament/SerlovheBand.vue";
+import CatchWord from "./ornament/CatchWord.vue";
 import { introDone } from "@/composables/intro";
+import { catalogCategory } from "@/composables/catalog";
+import { categories, products, type CategoryId } from "@/data/products";
 import { goToSection } from "@/router";
 import { asset } from "@/asset";
 import { site } from "@/data/site";
 
-const section = ref<HTMLElement>();
-const parallax = ref(0);
-const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const counts = products.reduce<Record<string, number>>((c, p) => ((c[p.category] = (c[p.category] ?? 0) + 1), c), {});
 
-function onScroll() {
-  const el = section.value;
-  if (!el || reduce) return;
-  parallax.value = Math.min(1, Math.max(0, window.scrollY / el.offsetHeight));
+function open(id: CategoryId) {
+  catalogCategory.value = id;
+  goToSection("kataloq");
 }
-onMounted(() => window.addEventListener("scroll", onScroll, { passive: true }));
-onBeforeUnmount(() => window.removeEventListener("scroll", onScroll));
 </script>
 
 <template>
-  <section
-    ref="section"
-    class="relative overflow-hidden text-paper"
-    :class="{ 'is-in': introDone }"
-    style="background: radial-gradient(80% 70% at 70% 40%, #1a2441 0%, #0b1020 70%)"
-  >
-    <div
-      class="mx-auto grid min-h-[100svh] max-w-7xl items-center gap-12 px-4 pb-16 pt-28 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-24 lg:pt-32"
-    >
-      <div class="relative z-10 max-w-xl">
-        <p class="enter eyebrow mb-6 flex items-center gap-3 text-gold-soft" style="--i: 0">
-          <span class="h-px w-8 bg-gold" />
-          {{ site.since }}
-        </p>
-        <h1 class="enter display text-[clamp(3rem,8vw,6.2rem)]" style="--i: 1">
-          Evinizə <em class="font-normal italic text-gold-soft">işıq</em> gətirən tikmələr
-        </h1>
-        <p class="enter mt-7 max-w-md text-[15px] leading-relaxed text-silver-soft/80" style="--i: 2">
-          Azərbaycan xalçalarının, miniatürlərinin və naxışlarının ruhunu müasir ev tekstilinə köçürürük — yastıqlar,
-          süfrələr və uşaq otağı üçün.
-        </p>
-        <div class="enter mt-10 flex flex-wrap gap-3" style="--i: 3">
-          <a href="#kataloq" class="btn btn-gold" @click.prevent="goToSection('kataloq')">Kataloqa bax</a>
-          <a href="#haqqimizda" class="btn btn-ghost-light" @click.prevent="goToSection('haqqimizda')">Haqqımızda</a>
+  <section class="hero relative bg-paper" :class="{ 'is-in': introDone }">
+    <div class="mx-auto max-w-[1360px] px-4 pb-14 pt-[calc(5.5rem+env(safe-area-inset-top))] sm:px-10 sm:pt-[calc(7rem+env(safe-area-inset-top))]">
+      <SerlovheBand class="unvan" />
+
+      <div class="mt-12 grid gap-14 lg:mt-16 lg:grid-cols-12 lg:gap-10">
+        <div class="lg:col-span-6 lg:pr-6 xl:col-span-5">
+          <h1 class="enter display text-[clamp(2.9rem,6.2vw,5.6rem)]" style="--i: 0">
+            Evinizə <span class="gold-text">işıq</span> gətirən tikmələr
+          </h1>
+          <p class="enter mt-8 max-w-[34rem] text-[1.05rem] leading-relaxed text-ink-soft" style="--i: 1">
+            Şirvan kilimlərinin həndəsəsi, Qarabağ xalçalarının rəngləri və Nizami miniatürlərinin zərifliyi. {{ site.since }}
+            evinizdəki yastıqda, süfrədə və salfetdə.
+          </p>
+
+          <!-- Fihrist: the manuscript's table of contents, and the way into the catalogue. -->
+          <nav class="enter mt-12" style="--i: 2" aria-labelledby="fihrist-title">
+            <h2 id="fihrist-title" class="display text-xl">Fihrist</h2>
+            <ul class="mt-4 border-t border-gold">
+              <li v-for="c in categories" :key="c.id" class="border-b border-line">
+                <button
+                  type="button"
+                  class="group flex w-full items-baseline gap-3 py-3.5 text-left transition-colors duration-200 hover:text-gold-deep"
+                  @click="open(c.id)"
+                >
+                  <span class="display text-[1.35rem]">{{ c.label }}</span>
+                  <span class="leader mb-1.5 flex-1" aria-hidden="true" />
+                  <span class="tabular-nums text-sm text-silver-ink group-hover:text-gold-deep">{{ counts[c.id] ?? 0 }}</span>
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="enter mt-10 flex flex-wrap items-center gap-x-8 gap-y-4" style="--i: 3">
+            <a href="#kataloq" class="btn btn-ink" @click.prevent="goToSection('kataloq')">Kataloqa keçin</a>
+            <a
+              :href="`https://wa.me/${site.whatsapp}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="smallcaps border-b border-gold pb-1 text-ink-soft transition-colors hover:text-ink"
+            >
+              WhatsApp ilə yazın
+            </a>
+          </div>
         </div>
+
+        <!-- The miniature: the photograph rises past the top of its ruled frame, as Tabriz painters let a tree break the border. -->
+        <figure class="enter-media relative lg:col-span-6 xl:col-span-6 xl:col-start-7">
+          <div class="relative mx-auto max-w-[560px] pt-10 lg:ml-auto">
+            <div class="cedvel absolute inset-x-0 bottom-14 top-24" aria-hidden="true" />
+            <RouterLink to="/kataloq/xosrov-ve-sirin" class="relative block px-[9%]">
+              <div class="relative aspect-[4/5] overflow-hidden bg-wash">
+                <img
+                  :src="asset('images/lifestyle/xosrov.jpg')"
+                  alt="«Xosrov və Şirin» tikməli yastıq, Nizami poemasından miniatür səhnə"
+                  fetchpriority="high"
+                  class="absolute inset-0 size-full object-cover object-[50%_35%]"
+                />
+              </div>
+            </RouterLink>
+            <figcaption class="relative mt-6 flex items-baseline justify-between gap-4 px-[9%]">
+              <RouterLink to="/kataloq/xosrov-ve-sirin" class="display text-xl hover:text-gold-deep">Xosrov və Şirin</RouterLink>
+              <span class="text-sm text-silver-ink">40 × 50 sm · <span class="tabular-nums text-ink">100 ₼</span></span>
+            </figcaption>
+          </div>
+        </figure>
       </div>
 
-      <div class="enter-media relative mx-auto w-full max-w-[460px] lg:max-w-none">
-        <div class="relative aspect-[4/5] w-[84%] lg:ml-auto">
-          <div class="absolute -inset-3 rounded-t-[999px] border border-gold/40" aria-hidden="true" />
-          <div class="absolute inset-0 overflow-hidden rounded-t-[999px] bg-navy">
-            <img
-              :src="asset('images/lifestyle/xosrov.jpg')"
-              alt="«Xosrov və Şirin» tikməli yastıq"
-              fetchpriority="high"
-              class="absolute inset-x-0 -top-[8%] h-[116%] w-full object-cover object-[50%_30%] will-change-transform"
-              :style="{ transform: `translateY(${parallax * 12}%)` }"
-            />
-          </div>
-        </div>
-        <div
-          class="absolute -bottom-6 left-0 w-[42%] overflow-hidden rounded-t-[999px] border-4 border-ink shadow-2xl will-change-transform lg:-left-6"
-          :style="{ transform: `translateY(${parallax * -18}%)` }"
-        >
-          <div class="relative aspect-[3/4]">
-            <img :src="asset('images/products/gollu.jpg')" alt="«Göllü» məxmər yastıq" class="absolute inset-0 size-full object-cover" />
-          </div>
-        </div>
-      </div>
+      <CatchWord class="mt-16" to="haqqimizda" word="Haqqımızda" />
     </div>
-
-    <a
-      href="#haqqimizda"
-      aria-label="Aşağı keç"
-      class="enter absolute bottom-6 left-1/2 hidden -translate-x-1/2 text-silver/60 transition-colors hover:text-gold-soft lg:block"
-      style="--i: 6"
-      @click.prevent="goToSection('haqqimizda')"
-    >
-      <ArrowDown class="size-5 animate-bounce [animation-duration:2.4s]" :stroke-width="1.4" />
-    </a>
   </section>
 </template>
 
 <style scoped>
-/* Entrance plays once the intro curtain lifts; before that the hero sits fully composed underneath. */
+.leader {
+  border-bottom: 1px dotted var(--color-silver);
+}
+/* The folio is fully composed under the cover; once it opens, the text settles in. */
 .is-in .enter {
-  animation: hero-in 0.9s cubic-bezier(0.23, 1, 0.32, 1) both;
-  animation-delay: calc(var(--i) * 80ms);
+  animation: settle 0.9s var(--ease-out-strong) both;
+  animation-delay: calc(0.25s + var(--i) * 70ms);
 }
 .is-in .enter-media {
-  animation: media-in 1.2s cubic-bezier(0.23, 1, 0.32, 1) 0.15s both;
+  animation: settle-media 1.2s var(--ease-out-strong) 0.2s both;
 }
-@keyframes hero-in {
+.is-in :deep(.unvan) {
+  animation: unvan 1.1s var(--ease-out-strong) both;
+}
+@keyframes settle {
   from {
     opacity: 0;
-    transform: translateY(24px);
-    filter: blur(6px);
+    transform: translateY(14px);
+    filter: blur(3px);
   }
 }
-@keyframes media-in {
+@keyframes settle-media {
   from {
     opacity: 0;
-    transform: scale(0.97);
+    transform: scale(0.985);
+  }
+}
+@keyframes unvan {
+  from {
+    clip-path: inset(0 50% 0 50%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .is-in .enter,
-  .is-in .enter-media {
+  .is-in .enter-media,
+  .is-in :deep(.unvan) {
     animation: none;
   }
 }

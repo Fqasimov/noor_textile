@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Minus, Plus } from "lucide-vue-next";
 import SiteHeader from "@/components/SiteHeader.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import ProductCard from "@/components/ProductCard.vue";
+import SerlovheBand from "@/components/ornament/SerlovheBand.vue";
 import { categories, formatPrice, getProduct, products } from "@/data/products";
 import { addToCart, cartOpen } from "@/composables/cart";
 import { whatsappLink } from "@/data/site";
@@ -25,7 +26,7 @@ watch(
   () => {
     active.value = 0;
     qty.value = 1;
-    document.title = `${product.value.name} — Noor Textile`;
+    document.title = `${product.value.name} · Noor Textile`;
   },
   { immediate: true },
 );
@@ -44,45 +45,41 @@ function add() {
   setTimeout(() => {
     added.value = false;
     cartOpen.value = true;
-  }, 650);
+  }, 700);
 }
 
-const imgClass = (i: number) =>
-  product.value.cutout && i === 0 ? "object-contain p-[10%] mix-blend-multiply" : "object-cover";
+const fit = (i: number) => (product.value.cutout && i === 0 ? "object-contain p-[10%] mix-blend-multiply" : "object-cover");
 </script>
 
 <template>
   <SiteHeader />
-  <main class="mx-auto max-w-7xl px-4 pb-24 pt-[calc(6rem+env(safe-area-inset-top))] sm:px-8 sm:pt-[calc(7rem+env(safe-area-inset-top))]">
-    <RouterLink
-      :to="{ name: 'home' }"
-      class="eyebrow mb-8 inline-flex items-center gap-2 text-muted transition-colors hover:text-ink"
-    >
-      <ArrowLeft class="size-3.5" /> Kataloq
+  <main class="mx-auto max-w-[1360px] px-4 pb-24 pt-[calc(6rem+env(safe-area-inset-top))] sm:px-10 sm:pt-[calc(8rem+env(safe-area-inset-top))]">
+    <RouterLink :to="{ name: 'home' }" class="smallcaps inline-flex min-h-11 items-center gap-2 text-silver-ink transition-colors hover:text-ink">
+      <ArrowLeft class="size-3.5" :stroke-width="1.4" /> Kataloq
     </RouterLink>
 
-    <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
+    <div class="mt-6 grid gap-12 lg:grid-cols-12 lg:gap-16">
       <div class="min-w-0 lg:col-span-7">
-        <div class="relative aspect-[4/5] overflow-hidden rounded-sm bg-mist">
+        <div class="cedvel relative m-1.5 aspect-[4/5] overflow-hidden bg-wash">
           <Transition name="fade">
             <img
               :key="product.images[active]"
               :src="product.images[active]"
               :alt="product.name"
               class="absolute inset-0 size-full"
-              :class="imgClass(active)"
+              :class="fit(active)"
             />
           </Transition>
         </div>
-        <div v-if="product.images.length > 1" class="mt-3 flex gap-3">
+        <div v-if="product.images.length > 1" class="mt-6 flex gap-4">
           <button
             v-for="(src, i) in product.images"
             :key="src"
             type="button"
             :aria-label="`Şəkil ${i + 1}`"
             :aria-pressed="active === i"
-            class="relative aspect-[4/5] w-20 overflow-hidden rounded-sm bg-mist transition-[opacity,box-shadow] duration-200"
-            :class="active === i ? 'ring-1 ring-ink ring-offset-2 ring-offset-paper' : 'opacity-60 hover:opacity-100'"
+            class="relative aspect-[4/5] w-20 overflow-hidden bg-wash transition-[opacity,box-shadow] duration-200"
+            :class="active === i ? 'shadow-[0_0_0_1px_var(--color-gold)]' : 'opacity-55 hover:opacity-100'"
             @click="active = i"
           >
             <img :src="src" alt="" class="absolute inset-0 size-full" :class="i === 0 && product.cutout ? 'object-contain p-1 mix-blend-multiply' : 'object-cover'" />
@@ -91,60 +88,59 @@ const imgClass = (i: number) =>
       </div>
 
       <div class="min-w-0 lg:col-span-5">
-        <div class="lg:sticky lg:top-28">
-          <p class="eyebrow text-gold-deep">{{ category?.label }}</p>
-          <h1 class="display mt-4 text-[clamp(2.6rem,5vw,4rem)]">{{ product.name }}</h1>
-          <p class="mt-4 text-2xl font-semibold tabular-nums" :class="{ 'text-gold-deep': onRequest }">
-            {{ formatPrice(product.price) }}
-          </p>
-          <p class="mt-8 text-[15px] leading-relaxed text-muted">{{ product.description }}</p>
+        <div class="lg:sticky lg:top-32">
+          <h1 class="display text-[clamp(2.6rem,4.6vw,4.2rem)]">{{ product.name }}</h1>
+          <p class="mt-3 text-silver-ink">{{ category?.label }}</p>
+          <p class="mt-8 text-2xl tabular-nums" :class="onRequest ? 'text-silver-ink' : 'text-ink'">{{ formatPrice(product.price) }}</p>
+          <div class="rule-double mt-8" />
+          <p class="mt-8 max-w-[52ch] text-[1.02rem] leading-[1.8] text-ink-soft">{{ product.description }}</p>
 
-          <dl class="mt-8 divide-y divide-line border-y border-line text-sm">
-            <div v-if="product.size" class="flex justify-between gap-4 py-3.5">
-              <dt class="text-muted">Ölçü</dt>
-              <dd>{{ product.size }}</dd>
+          <dl class="mt-10 border-t border-gold text-[0.95rem]">
+            <div v-if="product.size" class="flex justify-between gap-6 border-b border-line py-4">
+              <dt class="text-silver-ink">Ölçü</dt>
+              <dd class="tabular-nums">{{ product.size }}</dd>
             </div>
-            <div v-if="product.color" class="flex justify-between gap-4 py-3.5">
-              <dt class="text-muted">Rəng</dt>
+            <div v-if="product.color" class="flex justify-between gap-6 border-b border-line py-4">
+              <dt class="text-silver-ink">Rəng</dt>
               <dd class="text-right">{{ product.color }}</dd>
             </div>
-            <div class="flex justify-between gap-4 py-3.5">
-              <dt class="text-muted">Çatdırılma və ödəniş</dt>
-              <dd class="text-right">Sifarişdə razılaşdırılır</dd>
+            <div class="flex justify-between gap-6 border-b border-line py-4">
+              <dt class="text-silver-ink">Çatdırılma və ödəniş</dt>
+              <dd class="text-right">Sifariş zamanı razılaşdırılır</dd>
             </div>
           </dl>
 
-          <a v-if="onRequest" :href="ask" target="_blank" rel="noopener noreferrer" class="btn btn-dark mt-8 w-full">
-            Qiyməti soruş
+          <a v-if="onRequest" :href="ask" target="_blank" rel="noopener noreferrer" class="btn btn-ink mt-10 w-full">
+            Qiyməti WhatsApp-da soruşun
           </a>
           <template v-else>
-            <div class="mt-8 flex gap-3">
-              <div class="flex h-12 items-center rounded-full border border-line bg-white">
+            <div class="mt-10 flex gap-3">
+              <div class="flex min-h-[3.25rem] items-center shadow-[inset_0_0_0_1px_var(--color-silver)]">
                 <button type="button" aria-label="Azalt" class="grid size-12 place-items-center active:scale-90" @click="qty = Math.max(1, qty - 1)">
-                  <Minus class="size-3.5" />
+                  <Minus class="size-3.5" :stroke-width="1.4" />
                 </button>
-                <span class="w-6 text-center tabular-nums">{{ qty }}</span>
+                <span class="w-7 text-center tabular-nums" aria-live="polite">{{ qty }}</span>
                 <button type="button" aria-label="Artır" class="grid size-12 place-items-center active:scale-90" @click="qty++">
-                  <Plus class="size-3.5" />
+                  <Plus class="size-3.5" :stroke-width="1.4" />
                 </button>
               </div>
-              <button type="button" class="btn btn-dark relative flex-1 overflow-hidden" @click="add">
+              <button type="button" class="btn btn-ink relative flex-1 overflow-hidden" @click="add">
                 <Transition name="label" mode="out-in">
-                  <span v-if="added" key="added" class="flex items-center gap-2"><Check class="size-4" /> Əlavə olundu</span>
+                  <span v-if="added" key="added" class="flex items-center gap-2"><Check class="size-4" :stroke-width="1.6" /> Səbətə əlavə olundu</span>
                   <span v-else key="add">Səbətə əlavə et</span>
                 </Transition>
               </button>
             </div>
-            <a :href="ask" target="_blank" rel="noopener noreferrer" class="btn btn-outline mt-3 w-full">WhatsApp ilə dərhal sifariş</a>
+            <a :href="ask" target="_blank" rel="noopener noreferrer" class="btn btn-line mt-3 w-full">WhatsApp ilə dərhal sifariş</a>
           </template>
         </div>
       </div>
     </div>
 
-    <section v-if="related.length" class="mt-28 border-t border-line pt-14">
-      <h2 class="display text-4xl">Bunlar da xoşunuza gələ bilər</h2>
-      <ul class="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4 xl:gap-x-6">
-        <li v-for="p in related" :key="p.slug" class="min-w-0"><ProductCard :product="p" /></li>
+    <section v-if="related.length" class="mt-28 lg:mt-36">
+      <SerlovheBand title="Kolleksiyadan" />
+      <ul class="related mt-10 grid grid-cols-2 md:grid-cols-4">
+        <li v-for="p in related" :key="p.slug" class="min-w-0 px-3 py-8 sm:px-6"><ProductCard :product="p" /></li>
       </ul>
     </section>
   </main>
@@ -152,6 +148,12 @@ const imgClass = (i: number) =>
 </template>
 
 <style scoped>
+.related {
+  overflow: hidden;
+}
+.related > li {
+  box-shadow: -1px 0 0 color-mix(in oklab, var(--color-gold) 55%, transparent);
+}
 .label-enter-active,
 .label-leave-active {
   transition:
@@ -161,12 +163,12 @@ const imgClass = (i: number) =>
 }
 .label-enter-from {
   opacity: 0;
-  transform: translateY(14px);
-  filter: blur(4px);
+  transform: translateY(12px);
+  filter: blur(3px);
 }
 .label-leave-to {
   opacity: 0;
-  transform: translateY(-14px);
-  filter: blur(4px);
+  transform: translateY(-12px);
+  filter: blur(3px);
 }
 </style>

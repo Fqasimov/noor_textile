@@ -24,6 +24,14 @@ const TOTAL_MS = (216 / 60) * 1000;
 const HOLD_MS = 350;
 
 const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Corner tooling reuses one quarter of the logo's ornament, mirrored into each corner.
+const corners = [
+  { flip: "scale(1 1)", style: { left: "3.4%", top: "5%" } },
+  { flip: "scale(-1 1) translate(32 0)", style: { right: "3.4%", top: "5%" } },
+  { flip: "scale(1 -1) translate(0 50)", style: { left: "3.4%", bottom: "5%" } },
+  { flip: "scale(-1 -1) translate(32 50)", style: { right: "3.4%", bottom: "5%" } },
+];
 const visible = ref(true);
 let timer: number | undefined;
 
@@ -47,10 +55,35 @@ function onAfterLeave() {
 </script>
 
 <template>
-  <Transition name="curtain" @after-leave="onAfterLeave">
+  <Transition :name="reduce ? 'fade' : 'cover'" @after-leave="onAfterLeave">
     <div v-if="visible" class="intro" role="presentation" @click="leave">
+      <!-- Tooled gold frame of a lacquer binding. -->
+      <svg class="tooling" aria-hidden="true">
+        <rect class="tool tool-outer" x="1.5%" y="2.4%" width="97%" height="95.2%" pathLength="1" />
+        <rect class="tool tool-inner" x="2.3%" y="3.6%" width="95.4%" height="92.8%" pathLength="1" />
+      </svg>
+      <svg
+        v-for="(c, i) in corners"
+        :key="i"
+        class="corner"
+        :style="c.style"
+        viewBox="-36 -40 40 30"
+        aria-hidden="true"
+      >
+        <g :transform="c.flip">
+          <path
+            v-for="(s, j) in ORNAMENT_STROKES"
+            :key="j"
+            :d="s.d"
+            fill="none"
+            stroke="#b08d3e"
+            :stroke-width="s.w"
+            stroke-linecap="round"
+          />
+        </g>
+      </svg>
       <div class="stage">
-        <div v-if="reduce" class="mx-auto w-[62%] text-silver-soft">
+        <div v-if="reduce" class="mx-auto w-[62%] text-silver">
           <NoorLogo ornament-color="#c8a868" />
         </div>
         <template v-else>
@@ -58,9 +91,9 @@ function onAfterLeave() {
           <svg class="logo" :viewBox="`${V.x} ${V.y} ${V.width} ${V.height}`" aria-label="Noor Textile">
             <defs>
               <linearGradient id="intro-silver" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#8d9094" />
-                <stop offset="0.5" stop-color="#c9cbce" />
-                <stop offset="1" stop-color="#8d9094" />
+                <stop offset="0" stop-color="#9a9da1" />
+                <stop offset="0.5" stop-color="#e2e3e5" />
+                <stop offset="1" stop-color="#9a9da1" />
               </linearGradient>
               <linearGradient id="intro-gold" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#c8a868" />
@@ -122,7 +155,7 @@ function onAfterLeave() {
           </svg>
         </template>
       </div>
-      <button type="button" class="eyebrow skip" @click.stop="leave">Keç</button>
+      <button type="button" class="smallcaps skip" @click.stop="leave">Keç</button>
     </div>
   </Transition>
 </template>
@@ -135,8 +168,38 @@ function onAfterLeave() {
   display: grid;
   place-items: center;
   cursor: pointer;
-  background: radial-gradient(60% 70% at 50% 50%, #18213b 0%, #0a0f1d 100%);
-  clip-path: inset(0 0 0 0);
+  /* Black lacquer with the faint sheen of a polished binding. */
+  background:
+    radial-gradient(55% 60% at 50% 46%, #1b1a18 0%, #0d0d0c 62%, #070707 100%);
+  transform-origin: left center;
+  backface-visibility: hidden;
+}
+.tooling {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.tool {
+  fill: none;
+  stroke: #b08d3e;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  animation: draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.tool-outer {
+  stroke-width: 1;
+}
+.tool-inner {
+  stroke: #6f6a60;
+  stroke-width: 1;
+  animation-delay: 0.15s;
+}
+.corner {
+  position: absolute;
+  width: clamp(44px, 6vw, 84px);
+  opacity: 0;
+  animation: appear 0.9s cubic-bezier(0.23, 1, 0.32, 1) 0.9s forwards;
 }
 .stage {
   position: relative;
@@ -155,7 +218,7 @@ function onAfterLeave() {
   width: 56%;
   aspect-ratio: 2 / 1;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(200, 168, 104, 0.16), rgba(200, 168, 104, 0));
+  background: radial-gradient(closest-side, rgba(220, 195, 134, 0.1), rgba(220, 195, 134, 0));
   filter: blur(30px);
   animation: appear 1.8s cubic-bezier(0.23, 1, 0.32, 1) both;
 }
@@ -188,11 +251,11 @@ function onAfterLeave() {
   position: absolute;
   right: max(1.5rem, env(safe-area-inset-right, 0px));
   bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
-  color: color-mix(in oklab, var(--color-silver) 70%, transparent);
+  color: #8f8a80;
   transition: color 0.2s ease;
 }
 .skip:hover {
-  color: var(--color-gold-soft);
+  color: #dcc386;
 }
 
 @keyframes draw {
@@ -257,19 +320,22 @@ function onAfterLeave() {
   }
 }
 
-.curtain-leave-active {
-  transition: clip-path 0.9s cubic-bezier(0.77, 0, 0.175, 1);
-}
-.curtain-leave-active .stage {
+/* The cover swings open on its left hinge, revealing the first folio. */
+.cover-leave-active {
   transition:
-    opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-    transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transform 1.15s cubic-bezier(0.77, 0, 0.175, 1),
+    box-shadow 1.15s ease,
+    filter 1.15s ease;
 }
-.curtain-leave-to {
-  clip-path: inset(0 0 100% 0);
+.cover-leave-to {
+  transform: perspective(2200px) rotateY(-96deg);
+  box-shadow: 60px 0 120px rgba(0, 0, 0, 0.35);
+  filter: brightness(0.6);
 }
-.curtain-leave-to .stage {
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+.fade-leave-to {
   opacity: 0;
-  transform: translateY(-24px) scale(0.98);
 }
 </style>

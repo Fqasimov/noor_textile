@@ -4,7 +4,7 @@ A new site for [Noor Textile](https://noortextile.az), a premium Azerbaijani hom
 
 The page flows in this order:
 
-1. **Logo intro**: the NOOR TEXTILE wordmark draws itself in (animated SVG). It plays once per browser session. Clicking anywhere or pressing **Keç** skips it, and it collapses to a static logo when `prefers-reduced-motion` is set.
+1. **Cover intro**: a black lacquer cover, where the gold tooling and the NOOR TEXTILE wordmark illuminate, then the cover swings open on its hinge. It plays once per browser session. Clicking anywhere or pressing **Keç** skips it, and it collapses to a static logo when `prefers-reduced-motion` is set.
 2. **Hero**: the brand statement, with arched mihrab-style image frames.
 3. **About us** (`#haqqimizda`): the brand story and values, followed by a **partners** grid (`#terefdaslar`).
 4. **Catalogue** (`#kataloq`): the full product range. It has a sticky toolbar with category tabs, search (accent-insensitive, so `sufre` finds `Süfrə`), sorting, and quick add-to-cart.
@@ -24,8 +24,9 @@ The page flows in this order:
   - hover effects only on devices that can hover
   - reduced-motion support
 - Self-hosted fonts:
-  - **Cormorant Garamond** (display) and **Manrope** (UI), through Fontsource.
+  - **Bodoni Moda** (display) and **Jost** (text and interface), through Fontsource.
   - Both cover the Azerbaijani glyphs (ə Ə ğ ş ı İ) and ₼.
+- The visual system (an illuminated manuscript in black, white, gold and silver) is documented in **`DESIGN.md`**.
 
 ## Run
 
@@ -41,7 +42,23 @@ The production build uses real URLs (`/kataloq/<slug>`), so the host must send u
 
 ### Logo animation video (Remotion)
 
-The site's intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
+The site's cover intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
+
+```bash
+cd video && npm install
+npm run studio     # preview
+npm run render     # → video/out/noor-intro.mp4
+```
+
+Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timings.
+
+## Brand palette
+
+Only black, white, gold and silver. The full token table, type rules and manuscript components are in `DESIGN.md`.
+
+## Logo animation video (Remotion)
+
+The site's cover intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
 
 ```bash
 cd video && npm install

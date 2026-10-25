@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
-import { Menu, Search, ShoppingBag, X } from "lucide-vue-next";
 import NoorLogo from "./NoorLogo.vue";
 import { cartCount, cartOpen, cartPulse } from "@/composables/cart";
 import { goToSection } from "@/router";
 import { site } from "@/data/site";
-
-/** `overlay` starts transparent over the dark hero; `solid` is used on inner pages. */
-const props = withDefaults(defineProps<{ variant?: "overlay" | "solid" }>(), { variant: "solid" });
 
 const nav = [
   { id: "haqqimizda", label: "Haqqımızda" },
@@ -19,7 +15,7 @@ const nav = [
 
 const scrolled = ref(false);
 const menu = ref(false);
-const onScroll = () => (scrolled.value = window.scrollY > 24);
+const onScroll = () => (scrolled.value = window.scrollY > 8);
 
 onMounted(() => {
   onScroll();
@@ -31,8 +27,6 @@ onBeforeUnmount(() => {
 });
 watch(menu, (open) => (document.body.style.overflow = open ? "hidden" : ""));
 
-const dark = computed(() => props.variant === "overlay" && !scrolled.value && !menu.value);
-
 function go(id: string) {
   menu.value = false;
   goToSection(id);
@@ -40,124 +34,116 @@ function go(id: string) {
 
 function openSearch() {
   go("kataloq");
-  setTimeout(() => document.getElementById("catalog-search")?.focus({ preventScroll: true }), 600);
+  setTimeout(() => document.getElementById("catalog-search")?.focus({ preventScroll: true }), 650);
 }
 </script>
 
 <template>
-  <header
-    class="fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] transition-[background-color,box-shadow,color] duration-300"
-    :class="
-      dark
-        ? 'bg-transparent text-paper'
-        : 'bg-paper/85 text-ink shadow-[0_1px_0_var(--color-line)] backdrop-blur-xl backdrop-saturate-150'
-    "
-  >
-    <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-8">
-      <RouterLink to="/" aria-label="Noor Textile — ana səhifə" class="shrink-0" @click="menu = false">
-        <NoorLogo class="h-8 w-auto sm:h-9" ornament-color="var(--color-gold)" />
+  <header class="fixed inset-x-0 top-0 z-50 bg-paper pt-[env(safe-area-inset-top)]">
+    <div class="mx-auto flex h-16 max-w-[1360px] items-center justify-between gap-6 px-4 sm:h-[76px] sm:px-10">
+      <RouterLink to="/" aria-label="Noor Textile, ana səhifə" class="shrink-0" @click="menu = false">
+        <NoorLogo class="h-7 w-auto text-ink sm:h-8" ornament-color="var(--color-gold)" />
       </RouterLink>
 
-      <nav class="hidden items-center gap-9 lg:flex" aria-label="Əsas menyu">
+      <nav class="hidden items-center gap-10 lg:flex" aria-label="Əsas menyu">
         <a
           v-for="item in nav"
           :key="item.id"
           :href="`#${item.id}`"
-          class="eyebrow py-2 opacity-80 transition-opacity duration-200 hover:opacity-100"
+          class="smallcaps link-rule py-2 text-ink-soft"
           @click.prevent="go(item.id)"
         >
           {{ item.label }}
         </a>
       </nav>
 
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-5 sm:gap-8">
+        <button type="button" class="smallcaps link-rule hidden py-2 text-ink-soft sm:block" @click="openSearch">Axtar</button>
         <button
           type="button"
-          aria-label="Axtarış"
-          class="grid size-11 place-items-center rounded-full transition-colors hover:bg-current/5"
-          @click="openSearch"
-        >
-          <Search class="size-[18px]" :stroke-width="1.6" />
-        </button>
-        <button
-          type="button"
+          class="smallcaps link-rule flex items-center gap-2 py-2 text-ink"
           :aria-label="`Səbət, ${cartCount} məhsul`"
-          class="relative grid size-11 place-items-center rounded-full transition-[transform,background-color] duration-150 hover:bg-current/5 active:scale-95"
           @click="cartOpen = true"
         >
-          <ShoppingBag class="size-[18px]" :stroke-width="1.6" />
-          <Transition name="swap">
-            <span
-              v-if="cartCount > 0"
-              :key="cartPulse"
-              class="badge absolute right-1 top-1 grid min-w-[18px] place-items-center rounded-full bg-gold px-1 text-[10px] font-bold leading-[18px] text-ink tabular-nums"
-            >
-              {{ cartCount }}
-            </span>
-          </Transition>
+          Səbət
+          <span :key="cartPulse" class="count inline-grid min-w-[1.4rem] place-items-center tabular-nums text-gold-deep">
+            {{ cartCount }}
+          </span>
         </button>
         <button
           type="button"
-          class="grid size-11 place-items-center rounded-full lg:hidden"
-          :aria-label="menu ? 'Menyunu bağla' : 'Menyunu aç'"
+          class="smallcaps py-2 text-ink lg:hidden"
           :aria-expanded="menu"
+          aria-controls="mobile-menu"
           @click="menu = !menu"
         >
-          <X v-if="menu" class="size-5" :stroke-width="1.6" />
-          <Menu v-else class="size-5" :stroke-width="1.6" />
+          {{ menu ? "Bağla" : "Menyu" }}
         </button>
       </div>
     </div>
+    <div class="rule-double transition-opacity duration-300" :class="scrolled || menu ? 'opacity-100' : 'opacity-0'" />
 
-    <!-- Teleported: the header's backdrop-filter would otherwise become the menu's containing block. -->
+    <!-- Teleported: the fixed header would otherwise clip the full-screen menu. -->
     <Teleport to="body">
-    <Transition name="drop">
-      <div v-if="menu" class="fixed inset-x-0 bottom-0 top-[calc(4rem+env(safe-area-inset-top))] z-40 overflow-y-auto bg-paper px-6 pb-10 pt-6 lg:hidden">
-        <nav class="flex flex-col" aria-label="Mobil menyu">
-          <a
-            v-for="(item, i) in nav"
-            :key="item.id"
-            :href="`#${item.id}`"
-            class="menu-item display block border-b border-line py-4 text-4xl"
-            :style="{ animationDelay: `${0.04 * i}s` }"
-            @click.prevent="go(item.id)"
-          >
-            {{ item.label }}
-          </a>
-        </nav>
-        <div class="mt-10 space-y-2 text-sm text-muted">
-          <p class="select-all">{{ site.phoneDisplay }}</p>
-          <p class="select-all">{{ site.email }}</p>
+      <Transition name="drop">
+        <div
+          v-if="menu"
+          id="mobile-menu"
+          class="fixed inset-x-0 bottom-0 top-[calc(4rem+4px+env(safe-area-inset-top))] z-40 overflow-y-auto bg-paper px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-6 lg:hidden"
+        >
+          <nav class="flex flex-col" aria-label="Mobil menyu">
+            <a
+              v-for="(item, i) in nav"
+              :key="item.id"
+              :href="`#${item.id}`"
+              class="menu-item display flex items-baseline justify-between border-b border-line py-5 text-[2.4rem]"
+              :style="{ animationDelay: `${0.04 * i}s` }"
+              @click.prevent="go(item.id)"
+            >
+              {{ item.label }}
+            </a>
+          </nav>
+          <button type="button" class="smallcaps mt-8 text-ink-soft" @click="openSearch">Kataloqda axtar</button>
+          <div class="mt-10 space-y-1 text-sm text-silver-ink">
+            <p class="select-all">{{ site.phoneDisplay }}</p>
+            <p class="select-all">{{ site.email }}</p>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
     </Teleport>
   </header>
 </template>
 
 <style scoped>
-.badge {
-  animation: pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+.link-rule {
+  background: linear-gradient(var(--color-gold), var(--color-gold)) left bottom / 0 1px no-repeat;
+  transition:
+    background-size 260ms var(--ease-out-strong),
+    color 200ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link-rule:hover {
+    background-size: 100% 1px;
+    color: var(--color-ink);
+  }
+}
+.count {
+  animation: tick 0.35s var(--ease-out-strong);
 }
 .menu-item {
-  animation: item-in 0.3s cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation: item-in 0.35s var(--ease-out-strong) both;
 }
-@keyframes pop {
+@keyframes tick {
   from {
-    transform: scale(0.6);
-  }
-  to {
-    transform: scale(1);
+    opacity: 0;
+    transform: translateY(-6px);
+    filter: blur(2px);
   }
 }
 @keyframes item-in {
   from {
     opacity: 0;
     transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 </style>

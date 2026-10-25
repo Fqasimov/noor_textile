@@ -20,11 +20,11 @@ export const LOGO_REVEAL = {
 } as const;
 
 const C = {
-  inkInner: "#18213b",
-  inkOuter: "#0a0f1d",
-  silver: "#c9cbce",
-  silverDeep: "#8d9094",
-  gold: "#c8a868",
+  inkInner: "#1b1a18",
+  inkOuter: "#070707",
+  silver: "#e2e3e5",
+  silverDeep: "#9a9da1",
+  gold: "#c9a85a",
   goldDeep: "#8f7238",
 };
 
@@ -75,7 +75,7 @@ export const LogoReveal: React.FC<{ transparent?: boolean }> = ({ transparent })
           width: logoWidth * 0.9,
           height: logoWidth * 0.5,
           borderRadius: "50%",
-          background: `radial-gradient(closest-side, rgba(200,168,104,${0.16 * glow}), rgba(200,168,104,0))`,
+          background: `radial-gradient(closest-side, rgba(220,195,134,${0.1 * glow}), rgba(220,195,134,0))`,
           filter: "blur(30px)",
         }}
       />

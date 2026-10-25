@@ -7,7 +7,7 @@ import CatalogSection from "@/components/CatalogSection.vue";
 </script>
 
 <template>
-  <SiteHeader variant="overlay" />
+  <SiteHeader />
   <main>
     <HeroSection />
     <AboutSection />
