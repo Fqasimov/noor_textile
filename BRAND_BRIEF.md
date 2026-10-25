@@ -131,3 +131,20 @@ Based on search-index snippets (about 1+ year old):
 - Full product list and the remaining photos (coming)
 - Vector logo file; preferred domain name; languages
 - Are napkins and other table linen sold separately? Are gift sets or custom orders available?
+
+## Final batch (marketplace listings, partners, wordmark)
+- **Marketplace listings** (two screenshots): 16 more products with AZN prices. They include cushions,
+  table runners (Şirvan Kilim 45×130 for 190 ₼, Qədim Gəncə for 450 ₼), round table mats (Xarı Bülbül Ø60 for 140 ₼,
+  a turquoise one Ø70 for 250 ₼), an oval white table mat (120 ₼) and napkins (50×50 for 15 ₼).
+  All of them are in `src/data/products.ts`.
+- **Partners:** Villeroy & Boch, Soroka, Notes, City Park Restaurant, Gazelli Café, Mogan Hotel, Baku Caviar,
+  Wolt Market. Saved to `public/partners/`.
+- **Wordmark:** "N [ornament O] [ornament O] R", with TEXTILE set across the two O-frames, in grey.
+  It was rebuilt as a vector for the website intro. See the README.
+
+## Website direction (client brief)
+- An animated logo intro opens the site, followed by About and partners, then the full catalogue.
+- The look should mix Arzual and Saint Aslan (premium, editorial), and the usability should match freshness.az (fast,
+  comfortable shopping). Those three reference sites could not be opened from the build environment,
+  so the design follows that brief as written.
+- Colours: gold, silver, white, dark and navy.

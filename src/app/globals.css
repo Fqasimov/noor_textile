@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b1020;
+  --color-navy: #141c33;
+  --color-navy-2: #1f2a4a;
+  --color-gold: #b8975a;
+  --color-gold-soft: #d9c18f;
+  --color-gold-deep: #8a6d35;
+  --color-silver: #a9abae;
+  --color-silver-soft: #d8d9db;
+  --color-paper: #fbf9f5;
+  --color-mist: #f2eee7;
+  --color-line: #e5dfd4;
+  --color-muted: #6c6a66;
+
+  --font-display: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Manrope Variable", "Manrope", system-ui, sans-serif;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-gold) 35%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* Unlayered so it beats the overlay's utility classes: returning visitors in the
+   same session skip the intro before first paint. */
+html[data-intro="seen"] [data-intro-overlay] {
+  display: none !important;
+}
+html[data-intro="playing"] body {
+  overflow: hidden;
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.02;
+    font-variant-numeric: lining-nums;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 3rem;
+    padding: 0 1.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    transition:
+      transform 160ms var(--ease-out-strong),
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn-gold {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .btn-ghost-light {
+    border: 1px solid color-mix(in oklab, var(--color-silver-soft) 40%, transparent);
+    color: var(--color-paper);
+  }
+  .btn-dark {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .btn-outline {
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+    background: white;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-gold:hover {
+      background: var(--color-gold-soft);
+    }
+    .btn-ghost-light:hover {
+      border-color: var(--color-gold-soft);
+      color: var(--color-gold-soft);
+    }
+    .btn-dark:hover {
+      background: var(--color-navy-2);
+    }
+    .btn-outline:hover {
+      border-color: var(--color-ink);
+    }
+  }
+  .hairline-gold {
+    background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+    height: 1px;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
