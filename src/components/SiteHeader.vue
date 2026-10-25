@@ -1,21 +1,24 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 import NoorLogo from "./NoorLogo.vue";
 import { cartCount, cartOpen, cartPulse } from "@/composables/cart";
 import { goToSection } from "@/router";
 import { site } from "@/data/site";
 
+/** `overlay` sits transparent over the full-bleed hero photograph until the page scrolls. */
+const props = withDefaults(defineProps<{ variant?: "overlay" | "solid" }>(), { variant: "solid" });
+
 const nav = [
-  { id: "haqqimizda", label: "Haqqımızda" },
-  { id: "terefdaslar", label: "Tərəfdaşlar" },
+  { id: "kolleksiyalar", label: "Kolleksiyalar" },
   { id: "kataloq", label: "Kataloq" },
+  { id: "haqqimizda", label: "Haqqımızda" },
   { id: "elaqe", label: "Əlaqə" },
 ];
 
 const scrolled = ref(false);
 const menu = ref(false);
-const onScroll = () => (scrolled.value = window.scrollY > 8);
+const onScroll = () => (scrolled.value = window.scrollY > window.innerHeight * 0.6);
 
 onMounted(() => {
   onScroll();
@@ -27,86 +30,90 @@ onBeforeUnmount(() => {
 });
 watch(menu, (open) => (document.body.style.overflow = open ? "hidden" : ""));
 
+const clear = computed(() => props.variant === "overlay" && !scrolled.value && !menu.value);
+
 function go(id: string) {
   menu.value = false;
   goToSection(id);
 }
-
-function openSearch() {
-  go("kataloq");
-  setTimeout(() => document.getElementById("catalog-search")?.focus({ preventScroll: true }), 650);
-}
 </script>
 
 <template>
-  <header class="fixed inset-x-0 top-0 z-50 bg-paper pt-[env(safe-area-inset-top)]">
-    <div class="mx-auto flex h-16 max-w-[1360px] items-center justify-between gap-6 px-4 sm:h-[76px] sm:px-10">
-      <RouterLink to="/" aria-label="Noor Textile, ana səhifə" class="shrink-0" @click="menu = false">
-        <NoorLogo class="h-7 w-auto text-ink sm:h-8" ornament-color="var(--color-gold)" />
-      </RouterLink>
-
-      <nav class="hidden items-center gap-10 lg:flex" aria-label="Əsas menyu">
-        <a
-          v-for="item in nav"
-          :key="item.id"
-          :href="`#${item.id}`"
-          class="smallcaps link-rule py-2 text-ink-soft"
-          @click.prevent="go(item.id)"
-        >
-          {{ item.label }}
-        </a>
-      </nav>
-
-      <div class="flex items-center gap-5 sm:gap-8">
-        <button type="button" class="smallcaps link-rule hidden py-2 text-ink-soft sm:block" @click="openSearch">Axtar</button>
+  <header
+    class="fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)] transition-[background-color,color,box-shadow] duration-500"
+    :class="clear ? 'bg-transparent text-paper' : 'bg-paper/92 text-ink shadow-[0_1px_0_var(--color-line)] backdrop-blur-md'"
+  >
+    <div class="mx-auto grid h-16 max-w-[1440px] grid-cols-[1fr_auto_1fr] items-center px-4 sm:h-20 sm:px-10">
+      <div class="flex items-center gap-9">
         <button
           type="button"
-          class="smallcaps link-rule flex items-center gap-2 py-2 text-ink"
+          class="smallcaps flex min-h-11 items-center gap-3"
+          :aria-expanded="menu"
+          aria-controls="site-menu"
+          @click="menu = !menu"
+        >
+          <span class="relative block h-[9px] w-6" aria-hidden="true">
+            <span class="bar absolute left-0 top-0 h-px w-full bg-current" :class="{ 'translate-y-[4px] rotate-45': menu }" />
+            <span class="bar absolute bottom-0 left-0 h-px w-full bg-current" :class="{ '-translate-y-[4px] -rotate-45': menu }" />
+          </span>
+          <span class="hidden sm:inline">{{ menu ? "Bağla" : "Menyu" }}</span>
+        </button>
+        <a href="#kataloq" class="smallcaps hidden min-h-11 items-center opacity-80 transition-opacity hover:opacity-100 lg:flex" @click.prevent="go('kataloq')">
+          Kataloq
+        </a>
+      </div>
+
+      <RouterLink to="/" aria-label="Noor Textile, ana səhifə" class="justify-self-center" @click="menu = false">
+        <NoorLogo class="h-7 w-auto sm:h-9" />
+      </RouterLink>
+
+      <div class="flex justify-end">
+        <button
+          type="button"
+          class="smallcaps flex min-h-11 items-center gap-2"
           :aria-label="`Səbət, ${cartCount} məhsul`"
           @click="cartOpen = true"
         >
-          Səbət
-          <span :key="cartPulse" class="count inline-grid min-w-[1.4rem] place-items-center tabular-nums text-gold-deep">
+          <span class="hidden sm:inline">Səbət</span>
+          <span
+            :key="cartPulse"
+            class="count grid size-7 place-items-center rounded-full text-[0.68rem] tracking-normal tabular-nums"
+            :class="cartCount ? 'foil-fill text-ink' : 'shadow-[inset_0_0_0_1px_currentColor] opacity-70'"
+          >
             {{ cartCount }}
           </span>
         </button>
-        <button
-          type="button"
-          class="smallcaps py-2 text-ink lg:hidden"
-          :aria-expanded="menu"
-          aria-controls="mobile-menu"
-          @click="menu = !menu"
-        >
-          {{ menu ? "Bağla" : "Menyu" }}
-        </button>
       </div>
     </div>
-    <div class="rule-double transition-opacity duration-300" :class="scrolled || menu ? 'opacity-100' : 'opacity-0'" />
 
-    <!-- Teleported: the fixed header would otherwise clip the full-screen menu. -->
     <Teleport to="body">
-      <Transition name="drop">
+      <Transition name="menu">
         <div
           v-if="menu"
-          id="mobile-menu"
-          class="fixed inset-x-0 bottom-0 top-[calc(4rem+4px+env(safe-area-inset-top))] z-40 overflow-y-auto bg-paper px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-6 lg:hidden"
+          id="site-menu"
+          class="fixed inset-x-0 bottom-0 top-[calc(4rem+env(safe-area-inset-top))] z-40 overflow-y-auto bg-paper sm:top-[calc(5rem+env(safe-area-inset-top))]"
         >
-          <nav class="flex flex-col" aria-label="Mobil menyu">
-            <a
-              v-for="(item, i) in nav"
-              :key="item.id"
-              :href="`#${item.id}`"
-              class="menu-item display flex items-baseline justify-between border-b border-line py-5 text-[2.4rem]"
-              :style="{ animationDelay: `${0.04 * i}s` }"
-              @click.prevent="go(item.id)"
-            >
-              {{ item.label }}
-            </a>
-          </nav>
-          <button type="button" class="smallcaps mt-8 text-ink-soft" @click="openSearch">Kataloqda axtar</button>
-          <div class="mt-10 space-y-1 text-sm text-silver-ink">
-            <p class="select-all">{{ site.phoneDisplay }}</p>
-            <p class="select-all">{{ site.email }}</p>
+          <div class="mx-auto grid max-w-[1440px] gap-12 px-6 pb-[calc(2.5rem+env(safe-area-inset-bottom))] pt-10 sm:px-10 lg:grid-cols-[1.3fr_1fr] lg:pt-16">
+            <nav aria-label="Əsas menyu" class="flex flex-col">
+              <a
+                v-for="(item, i) in nav"
+                :key="item.id"
+                :href="`#${item.id}`"
+                class="menu-item display group flex items-baseline gap-5 py-2 text-[clamp(2.6rem,7vw,5.2rem)]"
+                :style="{ animationDelay: `${60 + i * 45}ms` }"
+                @click.prevent="go(item.id)"
+              >
+                <span class="transition-colors duration-200 group-hover:text-gold">{{ item.label }}</span>
+              </a>
+            </nav>
+            <div class="menu-item self-end space-y-1 text-ink-soft" style="animation-delay: 260ms">
+              <p class="select-all">{{ site.phoneDisplay }}</p>
+              <p class="select-all">{{ site.email }}</p>
+              <p>{{ site.address }}</p>
+              <a :href="`https://wa.me/${site.whatsapp}`" target="_blank" rel="noopener noreferrer" class="btn btn-ink mt-8">
+                WhatsApp ilə yazın
+              </a>
+            </div>
           </div>
         </div>
       </Transition>
@@ -115,35 +122,38 @@ function openSearch() {
 </template>
 
 <style scoped>
-.link-rule {
-  background: linear-gradient(var(--color-gold), var(--color-gold)) left bottom / 0 1px no-repeat;
-  transition:
-    background-size 260ms var(--ease-out-strong),
-    color 200ms ease;
-}
-@media (hover: hover) and (pointer: fine) {
-  .link-rule:hover {
-    background-size: 100% 1px;
-    color: var(--color-ink);
-  }
+.bar {
+  transition: transform 300ms var(--ease-out-strong);
 }
 .count {
-  animation: tick 0.35s var(--ease-out-strong);
+  animation: pop 400ms var(--ease-out-strong);
 }
 .menu-item {
-  animation: item-in 0.35s var(--ease-out-strong) both;
+  animation: item-in 500ms var(--ease-out-strong) both;
 }
-@keyframes tick {
+.menu-enter-active,
+.menu-leave-active {
+  transition:
+    clip-path 500ms var(--ease-in-out-strong),
+    opacity 300ms ease;
+}
+.menu-enter-from,
+.menu-leave-to {
+  clip-path: inset(0 0 100% 0);
+}
+.menu-leave-to {
+  opacity: 0;
+}
+@keyframes pop {
   from {
-    opacity: 0;
-    transform: translateY(-6px);
-    filter: blur(2px);
+    transform: scale(0.8);
+    opacity: 0.4;
   }
 }
 @keyframes item-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(18px);
   }
 }
 </style>

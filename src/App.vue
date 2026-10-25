@@ -2,6 +2,7 @@
 import { RouterView, useRouter } from "vue-router";
 import IntroOverlay from "@/components/IntroOverlay.vue";
 import CartDrawer from "@/components/CartDrawer.vue";
+import CartBar from "@/components/CartBar.vue";
 import { finishIntro, introDone, introPlaying } from "@/composables/intro";
 
 const router = useRouter();
@@ -29,5 +30,6 @@ function onIntroDone() {
       </div>
     </Transition>
   </RouterView>
+  <CartBar />
   <CartDrawer />
 </template>

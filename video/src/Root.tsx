@@ -9,6 +9,5 @@ export const RemotionRoot: React.FC = () => (
     fps={LOGO_REVEAL.fps}
     width={LOGO_REVEAL.width}
     height={LOGO_REVEAL.height}
-    defaultProps={{ transparent: false }}
   />
 );

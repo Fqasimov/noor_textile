@@ -2,15 +2,19 @@
 import SiteHeader from "@/components/SiteHeader.vue";
 import SiteFooter from "@/components/SiteFooter.vue";
 import HeroSection from "@/components/HeroSection.vue";
-import AboutSection from "@/components/AboutSection.vue";
+import CollectionsSection from "@/components/CollectionsSection.vue";
+import FeatureSection from "@/components/FeatureSection.vue";
+import LightSection from "@/components/LightSection.vue";
 import CatalogSection from "@/components/CatalogSection.vue";
 </script>
 
 <template>
-  <SiteHeader />
+  <SiteHeader variant="overlay" />
   <main>
     <HeroSection />
-    <AboutSection />
+    <CollectionsSection />
+    <FeatureSection />
+    <LightSection />
     <CatalogSection />
   </main>
   <SiteFooter />

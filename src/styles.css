@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 /*
- * Təzhib: the site is an illuminated manuscript. White folios, black ink, gold leaf for
- * rulings and illumination, silver for the quieter second rule. Black lacquer is reserved
- * for the covers (intro and footer) and for the primary action.
+ * Noor means light. White space, warm black ink, and two metals: gold foil for the brand and
+ * the moments that matter, silver for the quiet structure. The logo's O is the recurring
+ * window the site is seen through.
  */
 @theme {
-  --color-ink: #0b0b0c;
-  --color-ink-soft: #2b2b2e;
+  --color-ink: #0d0c0a;
+  --color-ink-soft: #3a3833;
   --color-paper: #ffffff;
-  --color-wash: #f4f4f3;
-  --color-line: #e4e4e2;
-  --color-silver: #b9bcc0;
-  --color-silver-ink: #6a6d71;
-  --color-gold: #b08d3e;
-  --color-gold-light: #dcc386;
-  --color-gold-deep: #7a5f22;
-  --color-lacquer: #0a0a0a;
+  --color-wash: #f4f3f1;
+  --color-line: #e7e5e1;
+  --color-silver: #b7b9bd;
+  --color-silver-ink: #6b6c70;
+  --color-gold: #b38b3a;
+  --color-gold-light: #e9cf8c;
+  --color-gold-deep: #7d5d1e;
+  --color-night: #0b0a08;
 
   --font-display: "Bodoni Moda Variable", "Bodoni Moda", "Didot", "Bodoni 72", serif;
   --font-sans: "Jost Variable", "Jost", "Futura", "Avenir Next", sans-serif;
@@ -82,60 +82,51 @@
   .display {
     font-family: var(--font-display);
     font-optical-sizing: auto;
-    font-weight: 420;
-    letter-spacing: -0.012em;
-    line-height: 1.04;
+    font-weight: 460;
+    letter-spacing: -0.015em;
+    line-height: 1.02;
     font-variant-numeric: lining-nums;
   }
-  /* Small capitals for navigation and meta: Jost tracked out, never above a heading. */
   .smallcaps {
     font-family: var(--font-sans);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
   }
-  .gold-leaf {
-    background: linear-gradient(100deg, #9c7a2e 0%, #dcc386 42%, #a8853a 68%, #cdb06a 100%);
+  /* Metallic gold foil: several stops so it reads as metal, not as a flat ochre. */
+  .foil {
+    background: linear-gradient(105deg, #7d5d1e 0%, #c9a24e 20%, #f3dfa0 36%, #b38b3a 54%, #e9cf8c 72%, #8a6a26 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  .gold-text {
-    color: var(--color-gold);
+  .foil-fill {
+    background: linear-gradient(105deg, #8a6a26 0%, #c9a24e 25%, #f0d998 45%, #b38b3a 65%, #e2c67f 85%, #8a6a26 100%);
   }
-
-  /* Cədvəl: the ruled frame of a manuscript painting: gold, a paper gap, then silver. */
-  .cedvel {
-    box-shadow:
-      0 0 0 1px var(--color-gold),
-      0 0 0 5px var(--color-paper),
-      0 0 0 6px var(--color-silver);
-  }
-  .rule-gold {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-gold) 12%, var(--color-gold) 88%, transparent);
-  }
-  .rule-double {
-    height: 4px;
-    border-top: 1px solid var(--color-gold);
-    border-bottom: 1px solid var(--color-silver);
+  .silver-fill {
+    background: linear-gradient(105deg, #8e9196 0%, #e9eaec 40%, #a7aaae 70%, #d9dadc 100%);
   }
 
   .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     min-height: 3.25rem;
     padding: 0 2rem;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 500;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     border-radius: 0;
     transition:
       transform 160ms var(--ease-out-strong),
-      background-color 200ms ease,
-      color 200ms ease,
-      box-shadow 200ms ease;
+      background-color 220ms ease,
+      color 220ms ease,
+      box-shadow 220ms ease;
     -webkit-tap-highlight-color: transparent;
   }
   .btn:active {
@@ -144,28 +135,36 @@
   .btn-ink {
     background: var(--color-ink);
     color: var(--color-paper);
-    box-shadow: inset 0 0 0 1px var(--color-ink);
+  }
+  .btn-paper {
+    background: var(--color-paper);
+    color: var(--color-ink);
   }
   .btn-line {
-    background: var(--color-paper);
     color: var(--color-ink);
     box-shadow: inset 0 0 0 1px var(--color-ink);
   }
-  .btn-gold-line {
-    color: var(--color-gold-light);
-    box-shadow: inset 0 0 0 1px var(--color-gold);
+  .btn-line-light {
+    color: var(--color-paper);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.55);
+  }
+  .btn-foil {
+    color: var(--color-ink);
   }
   @media (hover: hover) and (pointer: fine) {
     .btn-ink:hover {
-      background: var(--color-ink-soft);
-      box-shadow: inset 0 0 0 1px var(--color-gold);
+      background: #23211d;
+    }
+    .btn-paper:hover {
+      background: var(--color-gold-light);
     }
     .btn-line:hover {
-      box-shadow: inset 0 0 0 1px var(--color-gold);
+      background: var(--color-ink);
+      color: var(--color-paper);
     }
-    .btn-gold-line:hover {
-      background: var(--color-gold);
-      color: var(--color-ink);
+    .btn-line-light:hover {
+      box-shadow: inset 0 0 0 1px var(--color-gold-light);
+      color: var(--color-gold-light);
     }
   }
 

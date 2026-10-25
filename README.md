@@ -4,12 +4,13 @@ A new site for [Noor Textile](https://noortextile.az), a premium Azerbaijani hom
 
 The page flows in this order:
 
-1. **Cover intro**: a black lacquer cover, where the gold tooling and the NOOR TEXTILE wordmark illuminate, then the cover swings open on its hinge. It plays once per browser session. Clicking anywhere or pressing **Keç** skips it, and it collapses to a static logo when `prefers-reduced-motion` is set.
-2. **Hero**: the brand statement, with arched mihrab-style image frames.
-3. **About us** (`#haqqimizda`): the brand story and values, followed by a **partners** grid (`#terefdaslar`).
-4. **Catalogue** (`#kataloq`): the full product range. It has a sticky toolbar with category tabs, search (accent-insensitive, so `sufre` finds `Süfrə`), sorting, and quick add-to-cart.
-5. **Product pages** (`/kataloq/[slug]`): a gallery, details, a quantity picker, add to cart / WhatsApp order, and related products.
-6. **Cart drawer**: it sends the finished order to WhatsApp as a pre-filled message. No backend is needed.
+1. **Logo intro**: on white, NOOR is laid in gold, TEXTILE appears in black inside the O's, then the camera flies through the first O and the site opens through it. It plays once per browser session. Click anywhere or press **Keç** to skip it.
+2. **Hero**: full-screen product photographs with one headline, two actions and a link to the product on screen.
+3. **Collections** (`#kolleksiyalar`): four image tiles, each opening the catalogue already filtered.
+4. **Feature**: «Xosrov və Şirin» seen through the logo's O-frame, with direct add-to-cart.
+5. **About and partners** (`#haqqimizda`, `#terefdaslar`): "Noor means light". On black, a soft gold light follows the pointer and reveals the brand ornament.
+6. **Catalogue** (`#kataloq`): category tabs, accent-insensitive search (`sufre` finds `Süfrə`), sorting, and one clear action per product.
+7. **Product pages** (`/kataloq/<slug>`), a **cart bar** that appears once something is in the cart, and a **cart drawer** that sends the order to WhatsApp as a ready-written message (no backend needed).
 
 **Live preview:** https://claude.ai/artifact/5fMC3jFQu4r914DQ8EEe9f (private until shared from its Share menu).
 
@@ -26,7 +27,7 @@ The page flows in this order:
 - Self-hosted fonts:
   - **Bodoni Moda** (display) and **Jost** (text and interface), through Fontsource.
   - Both cover the Azerbaijani glyphs (ə Ə ğ ş ı İ) and ₼.
-- The visual system (an illuminated manuscript in black, white, gold and silver) is documented in **`DESIGN.md`**.
+- The visual system ("seeing through the O": black, white, metallic gold and silver) is documented in **`DESIGN.md`**.
 
 ## Run
 
@@ -42,7 +43,7 @@ The production build uses real URLs (`/kataloq/<slug>`), so the host must send u
 
 ### Logo animation video (Remotion)
 
-The site's cover intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
+The site's intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
 
 ```bash
 cd video && npm install

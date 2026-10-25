@@ -1,88 +1,88 @@
 # Noor Textile: Design System
 
-## World: Təzhib (the illuminated manuscript)
+## Idea: seeing through the O
 
-The site is built like an illuminated Azerbaijani manuscript, the tradition of Nizami's *Xəmsə*, produced in Tabriz and Shirvan. Noor's flagship cushion, «Xosrov və Şirin», reproduces a miniature from exactly such a manuscript.
+*Noor* means light. The wordmark has two O's, each an ornamental frame. The site is built on that one image: the brand is a window you look through.
 
-Every page is a white folio set in black ink, with gold leaf for rulings and illumination and silver for the quieter second rule. Black lacquer appears only where a bound book has it: the front cover (the intro), the back cover (the footer), and the primary action.
+- The intro flies the camera **through the first O**, and the site opens through it.
+- The flagship piece is shown **inside an O-frame** (`RingWindow`).
+- On black, the brand's ornament only appears where **light** falls (`LightSection`).
 
-**Refused:** navy, cream or parchment grounds, pill buttons, cards, eyebrow labels above headings, italic accent words, gradient text, and glass.
+Everything else stays quiet: white space, large photography, one serif voice, and very few controls.
+
+**Refused:**
+- navy and cream
+- repeating ornament bands
+- boxed cards and eyebrow labels
+- pill buttons
+- more than one primary action per screen
 
 ## Colour
 
-Only four families: black, white, gold, silver.
+Only black, white, gold and silver, with the two metals rendered as metal rather than flat tones.
 
-| Token | Hex | Role |
+| Token | Value | Role |
 |---|---|---|
-| `ink` | `#0b0b0c` | Text and primary buttons |
-| `ink-soft` | `#2b2b2e` | Body copy |
-| `paper` | `#ffffff` | The folio ground |
-| `wash` | `#f4f4f3` | Neutral plate behind product photographs (never cream) |
-| `line` | `#e4e4e2` | Quiet dividers |
-| `silver` | `#b9bcc0` | Second rule, input underlines, scrollbar |
-| `silver-ink` | `#6a6d71` | Secondary text (5:1 on white) |
-| `gold` | `#b08d3e` | Rulings, illumination, large display words only |
-| `gold-light` | `#dcc386` | Gold on lacquer, text selection |
-| `gold-deep` | `#7a5f22` | Small gold text that must pass contrast |
-| `lacquer` | `#0a0a0a` | Covers |
-
-Gold is never used for small text on white; use `gold-deep`.
+| `ink` | `#0d0c0a` | Warm black: text and primary buttons |
+| `ink-soft` | `#3a3833` | Body copy |
+| `paper` | `#ffffff` | Ground |
+| `wash` | `#f4f3f1` | Neutral plate behind product photographs |
+| `line` | `#e7e5e1` | Dividers |
+| `silver` / `silver-ink` | `#b7b9bd` / `#6b6c70` | Quiet structure / secondary text (5:1 on white) |
+| `gold` / `gold-light` / `gold-deep` | `#b38b3a` / `#e9cf8c` / `#7d5d1e` | Single-tone gold where foil can't be used |
+| `night` | `#0b0a08` | The light section and the footer |
+| `.foil` / `.foil-fill` | 6-stop gradient `#7d5d1e → #f3dfa0 → #8a6a26` | Metallic gold for the wordmark, the word "işıq", active states, cart count |
 
 ## Type
 
-- **Display:** Bodoni Moda (variable, optical size 6–96, weight about 420). Its hairlines sharpen with size, which suits couture. Used for headings, product names and the colophon. Numerals are lining.
-- **Text and interface:** Jost (variable). A geometric sans that echoes the N and R of the wordmark. Body text is 16–17px with line height 1.6–1.8.
-- **Small capitals** (`.smallcaps`): Jost at 0.72rem, tracking 0.22em. Used for navigation and buttons only, never as a label above a heading.
-- Prices and counts use Jost with tabular numerals. Bodoni numerals are not used at small sizes.
+- **Bodoni Moda** (display, weight 460 with optical sizing): headings, product names, large statements.
+- **Jost**: body, interface, prices (tabular numerals). It echoes the geometric N and R of the wordmark.
+- `.smallcaps` (Jost, 0.7rem, tracking 0.22em) is for buttons and the header only.
 
-## Manuscript devices (components)
+## Pages and usage
 
-| Device | Where | Implementation |
-|---|---|---|
-| **Sərlövhə** (illuminated headpiece) | Opens every section, replacing eyebrow labels | `ornament/SerlovheBand.vue`: the logo's own scroll ornament tiled between gold and silver rules, with a lobed cartouche holding the `h2` |
-| **Cədvəl** (ruled frame) | Photographs as miniatures | `.cedvel`: 1px gold rule, 4px paper gap, 1px silver rule |
-| **Breaking the frame** | Hero miniature | The photo rises above the top of its ruled frame, as a tree breaks the border in Tabriz painting |
-| **Fihrist** (table of contents) | Hero primary action | Categories with dotted leaders and counts; each opens the catalogue filtered to that category |
-| **Masnavi columns** | About text | Two columns divided by a centred gold rule |
-| **Verse rosette** | End of paragraphs, value titles, colophon | `ornament/GoldRosette.vue` |
-| **Rəkabə** (catchword) | Foot of each section | `ornament/CatchWord.vue` repeats the next section's name and links to it |
-| **Ruled catalogue** | Product grid | Gold hairlines between columns and silver lines between rows, with no card boxes |
-| **Lacquer covers** | Intro and footer | Black lacquer, tooled double frame (gold and dark silver), with a triangular colophon in the footer |
+- **Header:**
+  - On the left, a menu (full-screen, large Bodoni links, opening with a clip reveal) and a link to the catalogue.
+  - The wordmark sits in the centre.
+  - On the right, the cart with a gold count.
+  - The header is transparent over the hero photograph and turns white after scrolling.
+- **Hero:**
+  - Full-bleed photographs cross-fade with a slow zoom.
+  - One headline and two actions.
+  - A shoppable credit names the product on screen.
+  - Progress ticks let visitors switch photos.
+- **Collections:** four tall image tiles. Each one opens the catalogue already filtered.
+- **Feature:** «Xosrov və Şirin» seen through the O-frame, with its story, size, price and a direct "add to cart".
+- **Light section:** "«Noor» işıq deməkdir", three values, and the partner marks in silver on black.
+- **Catalogue:**
+  - The category tabs have a sliding foil underline.
+  - Search ignores accents, and there is a sort control.
+  - Each card has one always-visible action: add to cart, or ask on WhatsApp when there is no price.
+- **Cart bar:** once the cart has something in it, a black bar rises at the bottom with the item count, the total and "Sifariş". The cart is never more than one tap away.
+- **Cart drawer:** visible labels, the total, and the order sent to WhatsApp as a ready-written message.
+- **Footer:** contacts, then the wordmark in foil across the full width.
 
 ## Motion
 
-There is one authored moment, the **cover opening**:
+- **The authored moment:** the intro (`IntroOverlay.vue`).
+  1. The gold frames draw on, N and R slide in, and a sheen passes once.
+  2. TEXTILE rises in black.
+  3. A 1.35s quartic ease-in-out zoom flies through the gap between E and X, while a circular mask opens the site through the O.
 
-1. The tooled frame draws on.
-2. The logo is illuminated: the gold frames draw, TEXTILE rises, N and R slide in, and a sheen passes once.
-3. The lacquer cover swings open on its left hinge (`rotateY(-96deg)`, 1.15s, `cubic-bezier(0.77, 0, 0.175, 1)`).
-4. Behind it, the headpiece unrolls from its centre and the hero text settles.
-
-Everything else is functional and quick, following Emil Kowalski's rules:
-
-- the tab underline slides in 300ms, using a strong ease-out
-- the catalogue reflows with FLIP (`TransitionGroup`)
-- buttons press to `scale(0.97)`
-- image crossfades add 2px of blur
-- the drawer enters in 450ms and exits in 300ms
-- hover effects only run on devices that can hover
-- reduced motion is respected
-
-Nothing animates up from scale 0, and no section has its own scroll-triggered entrance.
+  Clicking anywhere or pressing "Keç" starts the fly-through immediately.
+- **Ambient:** the hero cross-fade with slow zoom, the cross-fade inside the O-frame, and the light that follows the pointer with a lag (it drifts on its own on touch screens).
+- **Functional** (Emil Kowalski's rules):
+  - press feedback of `scale(0.97)`
+  - the tab underline slides in 300ms with a strong ease-out
+  - the catalogue reflows with FLIP
+  - crossfades use a 2px blur
+  - drawers enter in 450ms and exit in 300ms
+  - hover effects only run on devices that can hover
+  - reduced motion is honoured everywhere
 
 The same intro exists as a Remotion composition in `video/` for exporting an MP4.
 
-## Browser surfaces
+## Implementation notes
 
-These are themed from the palette:
-
-- text selection is gold-light
-- the caret is gold
-- the focus ring is 1px gold, offset 4px
-- the scrollbar is thin silver
-- link underline offset is 0.3em
-
-## Content rules
-
-- Copy is Azerbaijani and states facts the client gave us. No invented claims.
-- Prices are in ₼ (AZN). Items without a price read "Qiymət sorğu ilə" and link to WhatsApp.
+- **Artifact viewer reset:** the viewer adds an unlayered `img { max-width: 100% }` rule, which beats Tailwind's layered utilities. Images that need a size other than "fill the parent" are therefore sized with inline styles (see the partner logos).
+- **Logo artwork:** everything is drawn from the vector paths in `src/logo/logo-paths.ts`.

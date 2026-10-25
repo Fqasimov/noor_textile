@@ -62,7 +62,7 @@ function browse() {
             <X class="size-5" :stroke-width="1.3" />
           </button>
         </div>
-        <div class="rule-double mx-7" />
+        <div class="mx-7 h-px bg-line" />
 
         <div v-if="cartLines.length === 0" class="flex flex-1 flex-col items-center justify-center gap-6 px-10 text-center">
           <p class="display text-2xl">Səbət hələ boşdur</p>
@@ -119,7 +119,7 @@ function browse() {
                 <input id="cart-address" v-model="address" autocomplete="street-address" class="field" />
               </label>
             </div>
-            <div class="flex items-baseline justify-between border-t border-gold pt-5">
+            <div class="flex items-baseline justify-between border-t border-line pt-5">
               <span class="text-ink-soft">Cəmi</span>
               <span class="text-[1.5rem] font-medium tabular-nums">
                 {{ cartTotal }} ₼<span v-if="hasOnRequest" class="ml-2 align-middle text-xs font-normal text-silver-ink">+ sorğu ilə</span>
@@ -157,7 +157,5 @@ function browse() {
 .cart-leave-to .panel {
   transform: translateX(100%);
 }
-.panel {
-  box-shadow: inset 1px 0 0 var(--color-gold);
-}
+
 </style>
