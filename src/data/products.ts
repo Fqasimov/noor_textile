@@ -1,3 +1,5 @@
+import { asset } from "@/asset";
+
 export type CategoryId = "yastiq" | "sufre" | "salfet" | "usaq";
 
 export const categories: { id: CategoryId; label: string; short: string }[] = [
@@ -22,7 +24,7 @@ export type Product = {
   badge?: string;
 };
 
-const img = (file: string) => `/images/products/${file}`;
+const img = (file: string) => asset(`images/products/${file}`);
 
 export const products: Product[] = [
   {
@@ -109,7 +111,7 @@ export const products: Product[] = [
     category: "yastiq",
     price: 90,
     color: "Narıncı",
-    images: [img("narinci-uzun.jpg"), "/images/lifestyle/terracotta.jpg"],
+    images: [img("narinci-uzun.jpg"), asset("images/lifestyle/terracotta.jpg")],
     cutout: true,
     description: "Panellərdə növbələşən kilim medalyonları, xoruz və keçi təsvirləri. Divan və kreslo üçün uzun format.",
   },
@@ -158,7 +160,7 @@ export const products: Product[] = [
     category: "yastiq",
     price: null,
     color: "Bej, göy",
-    images: [img("palm-summer.jpg"), "/images/lifestyle/summer.jpg"],
+    images: [img("palm-summer.jpg"), asset("images/lifestyle/summer.jpg")],
     description: "Yay kolleksiyası: bej parçada göy palma yarpaqları. Bağ və terras üçün təravətli seçim.",
     badge: "Yay",
   },
@@ -168,7 +170,7 @@ export const products: Product[] = [
     category: "yastiq",
     price: null,
     color: "Boz kətan, tünd göy",
-    images: [img("palma.jpg"), "/images/lifestyle/summer.jpg"],
+    images: [img("palma.jpg"), asset("images/lifestyle/summer.jpg")],
     description: "Boz kətan üzərində tək palma ağacı və tünd göy kant. Palm Summer ilə dəst kimi.",
     badge: "Yay",
   },

@@ -1,0 +1,19 @@
+{
+  "name": "noor-textile-video",
+  "private": true,
+  "description": "Remotion composition of the logo intro, for exporting an MP4 (Instagram etc.). The website itself is Vue; this folder is a separate React/Remotion tool.",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts LogoReveal out/noor-intro.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.538"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "5.9.3"
+  }
+}

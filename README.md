@@ -4,24 +4,25 @@ A new site for [Noor Textile](https://noortextile.az), a premium Azerbaijani hom
 
 The page flows in this order:
 
-1. **Logo intro**: the NOOR TEXTILE wordmark animates in, rendered with Remotion. It plays once per browser session. Clicking anywhere or pressing **Keç** skips it, and it collapses to a static logo when `prefers-reduced-motion` is set.
+1. **Logo intro**: the NOOR TEXTILE wordmark draws itself in (animated SVG). It plays once per browser session. Clicking anywhere or pressing **Keç** skips it, and it collapses to a static logo when `prefers-reduced-motion` is set.
 2. **Hero**: the brand statement, with arched mihrab-style image frames.
 3. **About us** (`#haqqimizda`): the brand story and values, followed by a **partners** grid (`#terefdaslar`).
 4. **Catalogue** (`#kataloq`): the full product range. It has a sticky toolbar with category tabs, search (accent-insensitive, so `sufre` finds `Süfrə`), sorting, and quick add-to-cart.
 5. **Product pages** (`/kataloq/[slug]`): a gallery, details, a quantity picker, add to cart / WhatsApp order, and related products.
 6. **Cart drawer**: it sends the finished order to WhatsApp as a pre-filled message. No backend is needed.
 
+**Live preview:** https://claude.ai/artifact/5fMC3jFQu4r914DQ8EEe9f (private until shared from its Share menu).
+
 ## Stack
 
-- **Next.js 16** (App Router, every page statically generated) + React 19 + TypeScript
-- **Tailwind CSS 4**, with design tokens in `src/app/globals.css`
-- **Motion** for UI transitions. These follow Emil Kowalski's guidance:
+- **Vue 3** (`<script setup>`, TypeScript) + **Vue Router** + **Vite**
+- **Tailwind CSS 4**, with design tokens in `src/styles.css`
+- Animations use Vue `<Transition>` / `<TransitionGroup>` and CSS. They follow Emil Kowalski's guidance:
   - strong ease-out curves
   - nothing animates up from `scale(0)`
   - press feedback on buttons
   - hover effects only on devices that can hover
   - reduced-motion support
-- **Remotion** for the logo intro. It plays in the browser with `@remotion/player` and can also be rendered to MP4 for social media.
 - Self-hosted fonts:
   - **Cormorant Garamond** (display) and **Manrope** (UI), through Fontsource.
   - Both cover the Azerbaijani glyphs (ə Ə ğ ş ı İ) and ₼.
@@ -30,19 +31,25 @@ The page flows in this order:
 
 ```bash
 npm install
-npm run dev          # http://localhost:3000
-npm run build && npm start
-npm run lint         # type-check
+npm run dev              # http://localhost:5173
+npm run build            # type-check + production build → dist/
+npm run preview
+npm run build:artifact   # single-page build for the claude.ai preview → dist-artifact/page/
 ```
 
-### Logo animation (Remotion)
+The production build uses real URLs (`/kataloq/<slug>`), so the host must send unknown paths to `index.html` (the default on Vercel and Netlify).
+
+### Logo animation video (Remotion)
+
+The site's intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
 
 ```bash
-npm run remotion:studio                       # edit / preview the intro
-npm run remotion:render                       # → out/noor-intro.mp4 (for Instagram etc.)
+cd video && npm install
+npm run studio     # preview
+npm run render     # → video/out/noor-intro.mp4
 ```
 
-The composition lives in `src/remotion/LogoReveal.tsx`. The site and the video share it, so both always match.
+Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timings.
 
 ## Brand palette
 
@@ -56,7 +63,7 @@ The composition lives in `src/remotion/LogoReveal.tsx`. The site and the video s
 
 ## Logo
 
-`src/components/logo/` holds a **vector rebuild** of the client's wordmark (`assets/brand/logo-wordmark-original.png`):
+`src/logo/logo-paths.ts` (rendered by `src/components/NoorLogo.vue`) holds a **vector rebuild** of the client's wordmark (`assets/brand/logo-wordmark-original.png`):
 
 - **N, R and TEXTILE** use Montserrat glyph outlines, fitted to the original letter boxes.
 - **The O-frame ornaments** were redrawn as stroke paths. The source PNG is only 348×158, which is too small to trace cleanly. Strokes also let the intro "draw" the frames on.
@@ -89,7 +96,7 @@ To mark a product as **price on request**, set `price: null`. To show a photo sh
   - 16 product images were cropped from marketplace screenshots and are low resolution. Replace them with the original photos.
   - The two kids' images look like AI-rendered mockups. Use real product photos once they exist.
 - **Partner logos.** Get permission to display the partners' logos.
-- **Remotion licence.** Companies with more than 3 employees need a [Remotion company licence](https://remotion.pro/license).
+- **Remotion licence** (only for the `video/` export tool). Companies with more than 3 employees need a [Remotion company licence](https://remotion.pro/license).
 
 ## Project layout
 
@@ -97,9 +104,12 @@ To mark a product as **price on request**, set `price: null`. To show a photo sh
 assets/                 original client material (photos, logos, screenshots)
 public/images/          web-ready crops (captions removed)
 public/partners/        partner logos (monochrome, transparent)
-src/app/                routes: home, /kataloq/[slug], 404, favicon
-src/components/         intro, logo, layout, home sections, catalog, product, cart
+src/components/         intro, logo, header, footer, home sections, catalogue, cart
+src/views/              home, product, 404
+src/composables/        cart, intro and scroll-reveal state
 src/data/               products, partners, site config
-src/remotion/           logo reveal composition
+src/logo/               vector logo paths
+scripts/                artifact build
+video/                  Remotion composition for the MP4 export
 BRAND_BRIEF.md          brand / product analysis
 ```
