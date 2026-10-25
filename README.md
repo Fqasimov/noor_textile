@@ -56,44 +56,6 @@ Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timing
 
 Only black, white, gold and silver. The full token table, type rules and manuscript components are in `DESIGN.md`.
 
-## Logo animation video (Remotion)
-
-The site's cover intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
-
-```bash
-cd video && npm install
-npm run studio     # preview
-npm run render     # → video/out/noor-intro.mp4
-```
-
-Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timings.
-
-## Brand palette
-
-Only black, white, gold and silver. The full token table, type rules and manuscript components are in `DESIGN.md`.
-
-## Logo animation video (Remotion)
-
-The site's cover intro is native SVG/CSS (`src/components/IntroOverlay.vue`). A matching Remotion composition lives in `video/`, which is a separate React tool for exporting the intro as an MP4 for social media:
-
-```bash
-cd video && npm install
-npm run studio     # preview
-npm run render     # → video/out/noor-intro.mp4
-```
-
-Both read the same logo paths (`src/logo/logo-paths.ts`) and use the same timings.
-
-## Brand palette
-
-| Token | Hex | Use |
-|---|---|---|
-| `ink` | `#0b1020` | dark navy-black: intro, hero, footer |
-| `navy` / `navy-2` | `#141c33` / `#1f2a4a` | navy surfaces |
-| `gold` / `gold-soft` / `gold-deep` | `#b8975a` / `#d9c18f` / `#8a6d35` | accents, ornaments, CTAs |
-| `silver` / `silver-soft` | `#a9abae` / `#d8d9db` | logo letters, secondary text on dark |
-| `paper` / `mist` / `line` | `#fbf9f5` / `#f2eee7` / `#e5dfd4` | light surfaces and hairlines |
-
 ## Logo
 
 `src/logo/logo-paths.ts` (rendered by `src/components/NoorLogo.vue`) holds a **vector rebuild** of the client's wordmark (`assets/brand/logo-wordmark-original.png`):
